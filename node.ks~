@@ -1,0 +1,7 @@
+runpath("0:/lib/node.ks").
+
+burnInit().
+
+until not burnUpdate() {
+	wait 0.
+}

@@ -1,0 +1,1359 @@
+{
+    "entries": [
+        "initialVelocityQueue",
+        {
+            "items": [
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                78,
+                79,
+                80,
+                81,
+                82,
+                83,
+                84,
+                85,
+                86,
+                87,
+                88,
+                89,
+                90,
+                91,
+                92,
+                93,
+                94,
+                95,
+                96,
+                97,
+                98,
+                99
+            ],
+            "$type": "kOS.Safe.Encapsulation.QueueValue"
+        },
+        "pitchoverAngleQueue",
+        {
+            "items": [
+                82.5,
+                83,
+                83.5,
+                84,
+                84.5,
+                85,
+                85.5,
+                86,
+                86.5,
+                87,
+                87.5,
+                88,
+                88.5,
+                89
+            ],
+            "$type": "kOS.Safe.Encapsulation.StackValue"
+        },
+        "Results",
+        {
+            "items": [
+                {
+                    "items": [
+                        92,
+                        80,
+                        0.51810068696406986,
+                        -95.3312463760376
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        93,
+                        80,
+                        0.93224826349948819,
+                        -96.459270477294922
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        94,
+                        80,
+                        0.81241740950639207,
+                        -97.5745677947998
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        95,
+                        80,
+                        0.81008932774621167,
+                        -98.550689697265625
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        96,
+                        80,
+                        0.77219975793083062,
+                        -99.392120361328125
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        97,
+                        80,
+                        0.74125890035206476,
+                        -100.24944686889648
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        98,
+                        80,
+                        0.72237505191566143,
+                        -101.2613410949707
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        99,
+                        80,
+                        0.15679883511878123,
+                        -102.06826782226563
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        80.5,
+                        0.51444363105569257,
+                        -91.543600559234619
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        88,
+                        80.5,
+                        0.65601395657813621,
+                        -93.3023624420166
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        89,
+                        80.5,
+                        0.77428015889904311,
+                        -94.423308372497559
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        90,
+                        80.5,
+                        0.86531927496692385,
+                        -95.838879585266113
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        91,
+                        80.5,
+                        0.82537849957067777,
+                        -96.925346374511719
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        92,
+                        80.5,
+                        0.8135417663111173,
+                        -97.578180313110352
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        93,
+                        80.5,
+                        0.78104248570959489,
+                        -98.574796676635742
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        94,
+                        80.5,
+                        0.76362627194450639,
+                        -99.4614429473877
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        95,
+                        80.5,
+                        0.75288485528972027,
+                        -100.49806594848633
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        96,
+                        80.5,
+                        0.67580301445051361,
+                        -101.47388458251953
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        97,
+                        80.5,
+                        0.45775254973215518,
+                        -102.43247222900391
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        98,
+                        80.5,
+                        0.46268365401948192,
+                        -103.06321334838867
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        99,
+                        80.5,
+                        0.39878181515890671,
+                        -103.53813171386719
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        84,
+                        81,
+                        0.39686693687739416,
+                        -90.531242847442627
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        85,
+                        81,
+                        0.62663662420444033,
+                        -91.977478981018066
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        81,
+                        0.7247642238680414,
+                        -93.4365668296814
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        81,
+                        0.867856959651057,
+                        -95.01606559753418
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        88,
+                        81,
+                        0.82439716843496069,
+                        -95.974771499633789
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        89,
+                        81,
+                        0.89823525283716732,
+                        -97.226110458374023
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        90,
+                        81,
+                        0.17585820985914641,
+                        -98.380607604980469
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        91,
+                        81,
+                        0.64944878878489676,
+                        -99.42970085144043
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        92,
+                        81,
+                        0.73298274552984932,
+                        -100.29329299926758
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        93,
+                        81,
+                        0.60873006957760878,
+                        -100.94388198852539
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        94,
+                        81,
+                        0.46018649329381156,
+                        -101.86036682128906
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        95,
+                        81,
+                        0.46843514320912982,
+                        -102.89662551879883
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        96,
+                        81,
+                        0.34500943805151968,
+                        -103.42257690429688
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        97,
+                        81,
+                        0.065909191088005151,
+                        -103.91004180908203
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        98,
+                        81,
+                        0.14843428829399019,
+                        -104.33843231201172
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        99,
+                        81,
+                        0.014868394830030218,
+                        -104.7761116027832
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        83,
+                        81.5,
+                        0.62944546285382952,
+                        -92.644826889038086
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        84,
+                        81.5,
+                        0.73590861575416056,
+                        -94.065941333770752
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        85,
+                        81.5,
+                        0.79881191393163054,
+                        -94.949090003967285
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        81.5,
+                        0.919102824958289,
+                        -96.365056991577148
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        81.5,
+                        0.91432190197237473,
+                        -97.497106552124023
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        90,
+                        81.5,
+                        0.083551591763152,
+                        -98.6948127746582
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        91,
+                        81.5,
+                        0.59512241492501816,
+                        -101.54810333251953
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        92,
+                        81.5,
+                        0.46770086372390424,
+                        -102.67681503295898
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        93,
+                        81.5,
+                        0.28281884629277942,
+                        -103.22360992431641
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        94,
+                        81.5,
+                        0.26476021851115122,
+                        -103.71849822998047
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        95,
+                        81.5,
+                        0.12939802619477669,
+                        -104.18458557128906
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        96,
+                        81.5,
+                        0.014712435021966881,
+                        -104.65121078491211
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        97,
+                        81.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        98,
+                        81.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        99,
+                        81.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        40,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        41,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        42,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        43,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        44,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        45,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        46,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        47,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        48,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        49,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        50,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        51,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        52,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        53,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        54,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        55,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        56,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        57,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        58,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        59,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        60,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        61,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        62,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        63,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        64,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        65,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        66,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        67,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        68,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        69,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        70,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        71,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        72,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        73,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        74,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        75,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        76,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        77,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        78,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        79,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        80,
+                        82,
+                        0.68903552063284079,
+                        -91.077533960342407
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        81,
+                        82,
+                        0.54872666651606583,
+                        -92.489283323287964
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        82,
+                        82,
+                        0.83111828939910037,
+                        -94.519227027893066
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        83,
+                        82,
+                        0.8768520285189122,
+                        -95.88191032409668
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        84,
+                        82,
+                        0.84557905209088213,
+                        -97.393169403076172
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        85,
+                        82,
+                        0.79463221413873619,
+                        -98.327363967895508
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        82,
+                        0.78391176306921917,
+                        -99.517387390136719
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        82,
+                        0.0061876705523263827,
+                        -98.399486541748047
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        88,
+                        82,
+                        0.712237035902517,
+                        -101.83249282836914
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        89,
+                        82,
+                        0.58976172533041815,
+                        -102.41987609863281
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        90,
+                        82,
+                        0.53625024781075947,
+                        -102.98044967651367
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        91,
+                        82,
+                        0.3030107606475127,
+                        -103.55928039550781
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        92,
+                        82,
+                        0.014937692824327983,
+                        -104.00096893310547
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        93,
+                        82,
+                        0.060063272904274191,
+                        -104.48281860351563
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        94,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        95,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        96,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        97,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        98,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        99,
+                        82,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        40,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        41,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        42,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        43,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        44,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        45,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        46,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        47,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        48,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        49,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        50,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        51,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        52,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        53,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        54,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        55,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        56,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        57,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        58,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        59,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        60,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        61,
+                        82.5,
+                        1E+69,
+                        0
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                }
+            ],
+            "$type": "kOS.Safe.Encapsulation.ListValue"
+        },
+        "HillClimberList",
+        {
+            "items": [
+                {
+                    "items": [
+                        85,
+                        81,
+                        0.92771005217957891
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        81,
+                        -1
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        81,
+                        0.56637230403416183
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        85,
+                        81.5,
+                        1.067585945884187
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        81.5,
+                        0.26314626400008329
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        81.5,
+                        -1
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        85,
+                        82,
+                        1.0114282082684438
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        86,
+                        82,
+                        0.92236445189824623
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                },
+                {
+                    "items": [
+                        87,
+                        82,
+                        0.40991121565535626
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.ListValue"
+                }
+            ],
+            "$type": "kOS.Safe.Encapsulation.ListValue"
+        }
+    ],
+    "$type": "kOS.Safe.Encapsulation.Lexicon"
+}

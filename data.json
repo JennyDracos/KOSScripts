@@ -1,0 +1,42 @@
+{
+    "entries": [
+        "phase",
+        "transfer-pause",
+        "body",
+        "SUN",
+        "inc",
+        0,
+        "peri",
+        10117266147.1,
+        "apo",
+        10169785672.1,
+        "target",
+        "SUN",
+        "steering",
+        10,
+        "flipover",
+        300,
+        "cstab",
+        false,
+        "klaw",
+        false,
+        "commandq",
+        {
+            "items": [
+                
+            ],
+            "$type": "kOS.Safe.Encapsulation.QueueValue"
+        },
+        "parkTimer",
+        0,
+        "dvBudget",
+        0,
+        "mission",
+        "orbit",
+        "transferTo",
+        "SUN",
+        "transferFrom",
+        "Kerbin"
+    ],
+    "$type": "kOS.Safe.Encapsulation.Lexicon"
+}

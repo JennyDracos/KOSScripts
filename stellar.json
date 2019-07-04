@@ -1,0 +1,430 @@
+{
+    "entries": [
+        "Mun",
+        {
+            "entries": [
+                "thrust",
+                100,
+                -12.5,
+                {
+                    "entries": [
+                        40.6,
+                        {
+                            "entries": [
+                                286000,
+                                152,
+                                290000,
+                                361,
+                                289000,
+                                152.3358006477356
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        37.8,
+                        {
+                            "entries": [
+                                285000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        37.6,
+                        {
+                            "entries": [
+                                285000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        37.5,
+                        {
+                            "entries": [
+                                285000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        88.3,
+                        {
+                            "entries": [
+                                285000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        143.6,
+                        {
+                            "entries": [
+                                36000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        20.5,
+                        {
+                            "entries": [
+                                36000,
+                                86.8648538589478,
+                                35000,
+                                86.231687545776367
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        10.5,
+                        {
+                            "entries": [
+                                35000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        9.9,
+                        {
+                            "entries": [
+                                36000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        35,
+                        {
+                            "entries": [
+                                36000,
+                                80.46733283996582,
+                                35000,
+                                79.449877738952637
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        19.5,
+                        {
+                            "entries": [
+                                36000,
+                                79.51605224609375
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        17.6,
+                        {
+                            "entries": [
+                                35000,
+                                80.625381469726563,
+                                36000,
+                                78.514810562133789
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        32.1,
+                        {
+                            "entries": [
+                                37000,
+                                78.738515853881836
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        33.7,
+                        {
+                            "entries": [
+                                36000,
+                                80.383559226989746
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        }
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                },
+                -0.8,
+                {
+                    "entries": [
+                        20.3,
+                        {
+                            "entries": [
+                                100000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        }
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                },
+                -2.2,
+                {
+                    "entries": [
+                        7.3,
+                        {
+                            "entries": [
+                                36000,
+                                361,
+                                35000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        7.5,
+                        {
+                            "entries": [
+                                36000,
+                                66.5600700378418
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        }
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                }
+            ],
+            "$type": "kOS.Safe.Encapsulation.Lexicon"
+        },
+        "Kerbin",
+        {
+            "entries": [
+                "thrust",
+                100,
+                -0.1,
+                {
+                    "entries": [
+                        239.4,
+                        {
+                            "entries": [
+                                93000,
+                                {
+                                    "entries": [
+                                        "longOffset",
+                                        361,
+                                        "simplex",
+                                        {
+                                            "items": [
+                                                {
+                                                    "x": 4011.138427734375,
+                                                    "y": 73.7928695678711,
+                                                    "z": 84.939647674560547,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3696.0310589755036,
+                                                    "y": 73.518520355224609,
+                                                    "z": 84.925930023193359,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3700.8168925524033,
+                                                    "y": 73.847740173339844,
+                                                    "z": 84.942390441894531,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 4636.5674625065,
+                                                    "y": 74.012347221374512,
+                                                    "z": 84.9506196975708,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                }
+                                            ],
+                                            "$type": "kOS.Safe.Encapsulation.ListValue"
+                                        },
+                                        "reflection",
+                                        {
+                                            "x": 0,
+                                            "y": 73.573391914367676,
+                                            "z": 84.9286756515503,
+                                            "$type": "kOS.Suffixed.Vector"
+                                        }
+                                    ],
+                                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                                },
+                                94000,
+                                {
+                                    "entries": [
+                                        "longOffset",
+                                        263.19474029541016,
+                                        "simplex",
+                                        {
+                                            "items": [
+                                                {
+                                                    "x": 3564.8211669921875,
+                                                    "y": 70.818387985229492,
+                                                    "z": 84.24073600769043,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3564.6630413290077,
+                                                    "y": 70.85792064666748,
+                                                    "z": 84.236068725585938,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3564.8,
+                                                    "y": 70.739322662353516,
+                                                    "z": 84.250072479248047,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3565,
+                                                    "y": 70.85792064666748,
+                                                    "z": 84.236068725585938,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                }
+                                            ],
+                                            "$type": "kOS.Safe.Encapsulation.ListValue"
+                                        }
+                                    ],
+                                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                                },
+                                99000,
+                                {
+                                    "entries": [
+                                        "longOffset",
+                                        259.5452880859375,
+                                        "simplex",
+                                        {
+                                            "items": [
+                                                {
+                                                    "x": 3554.17431640625,
+                                                    "y": 70.3193130493164,
+                                                    "z": 83.030502319335938,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3528.6456152074607,
+                                                    "y": 70.308643341064453,
+                                                    "z": 83.024709701538086,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3566.4689985496934,
+                                                    "y": 70.340651512146,
+                                                    "z": 83.042084693908691,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 3567.4083284263961,
+                                                    "y": 70.308643341064453,
+                                                    "z": 83.024709701538086,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                }
+                                            ],
+                                            "$type": "kOS.Safe.Encapsulation.ListValue"
+                                        },
+                                        "reflection",
+                                        {
+                                            "x": 3578.1136077494075,
+                                            "y": 70.329982757568359,
+                                            "z": 83.036294937133789,
+                                            "$type": "kOS.Suffixed.Vector"
+                                        },
+                                        "contraction",
+                                        {
+                                            "x": 0,
+                                            "y": 70.31397819519043,
+                                            "z": 83.027606010437012,
+                                            "$type": "kOS.Suffixed.Vector"
+                                        }
+                                    ],
+                                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                                }
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        239.9,
+                        {
+                            "entries": [
+                                102000,
+                                {
+                                    "entries": [
+                                        "longOffset",
+                                        361,
+                                        "simplex",
+                                        {
+                                            "items": [
+                                                {
+                                                    "x": 6580.758544921875,
+                                                    "y": 70.308643341064453,
+                                                    "z": 80.246912002563477,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 4291.2979553840378,
+                                                    "y": 70,
+                                                    "z": 80,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 7190.2902408034533,
+                                                    "y": 70.9259283542633,
+                                                    "z": 80.740739583969116,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 8260.6875811297359,
+                                                    "y": 70,
+                                                    "z": 80,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                }
+                                            ],
+                                            "$type": "kOS.Safe.Encapsulation.ListValue"
+                                        }
+                                    ],
+                                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                                }
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        226.4,
+                        {
+                            "entries": [
+                                102000,
+                                {
+                                    "entries": [
+                                        "longOffset",
+                                        250.57740783691406,
+                                        "simplex",
+                                        {
+                                            "items": [
+                                                {
+                                                    "x": 2412.194580078125,
+                                                    "y": 66.544441223144531,
+                                                    "z": 87.445022583007813,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 2411.482433776478,
+                                                    "y": 66.631967544555664,
+                                                    "z": 87.361109733581543,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 2412.9068119950448,
+                                                    "y": 66.456908464431763,
+                                                    "z": 87.528931498527527,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                },
+                                                {
+                                                    "x": 2432.2875292467716,
+                                                    "y": 66.631967544555664,
+                                                    "z": 87.361109733581543,
+                                                    "$type": "kOS.Suffixed.Vector"
+                                                }
+                                            ],
+                                            "$type": "kOS.Safe.Encapsulation.ListValue"
+                                        }
+                                    ],
+                                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                                }
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        }
+                    ],
+                    "$type": "kOS.Safe.Encapsulation.Lexicon"
+                }
+            ],
+            "$type": "kOS.Safe.Encapsulation.Lexicon"
+        },
+        "Minmus",
+        {
+            "entries": [
+                "thrust",
+                20
+            ],
+            "$type": "kOS.Safe.Encapsulation.Lexicon"
+        }
+    ],
+    "$type": "kOS.Safe.Encapsulation.Lexicon"
+}

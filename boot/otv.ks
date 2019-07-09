@@ -827,7 +827,11 @@ function setMode {
 		local traversal is Traverse(station, endPos()).
 		for node in traversal { pathQueue:insert(0, node). }
 
-		set terminate to { parameter distance. return true. }.
+		set terminate to { 
+			parameter distance. 
+			if ownDock:state:startswith("Docked") { return false. }
+			return true. 
+		}.
 
 		dockInit().
 		return true.

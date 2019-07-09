@@ -253,8 +253,10 @@ function BurnNode {
 	local t_burn_0 is ManeuverTime(dv_0:mag).
 
 	set t_ref to t_n + t_burn_0.
-	set v_ref to velocityAt(ship, t_ref):orbit.
-	set r_ref to positionAt(ship, t_ref) - ship:body:position.
+	set v_ref to velocityAt(ship, t_ref):orbit * 
+		solarprimevector:direction:inverse.
+	set r_ref to (positionAt(ship, t_ref) - ship:body:position) *
+		solarprimevector:direction:inverse.
 
 	BurnInit(t_n, dv_0).
 }
@@ -268,8 +270,10 @@ function BurnMatch {
 	local t_burn_0 is ManeuverTime(dv_0:mag).
 	
 	set t_ref to t_n + t_burn_0.
-	set v_ref to velocityAt(orb_t, t_ref):orbit.
-	set r_ref to positionAt(orb_t, t_ref) - ship:body:position + offset.
+	set v_ref to velocityAt(orb_t, t_ref):orbit *
+		solarprimevector:direction:inverse.
+	set r_ref to (positionAt(orb_t, t_ref) - ship:body:position + offset) *
+		solarprimevector:direction:inverse.
 
 	BurnInit(t_n, dv_0).
 }.
@@ -335,14 +339,16 @@ function BurnInit {
 				set burnoutState to VelocityVerlet(t_0, t_burn, t_ref, i_f).
 
 				// v_miss is v_node - v_cutoff.
-				set v_err to v_ref - burnoutState["v_f"].
+				set v_err to v_ref * solarprimevector:direction - 
+					burnoutState["v_f"].
 				set dv to dv + 0.5 * v_err.
 
 				if dv:mag > dv_0:mag * 5 { return 1e10 + dv:mag. }
 
 				printData("v_err:",39,v_err:mag).
 			}
-			local p_err is r_ref - burnoutState["r_f"].
+			local p_err is (r_ref * solarprimevector:direction) - 
+				burnoutState["r_f"].
 
 			return p_err:mag.
 		},
@@ -359,7 +365,7 @@ function BurnInit {
 
 	local v_err is V(100,0,0).
 	local burnoutState is Lexicon("t", t_n, "r_f", V(0,0,0), "v_f", V(0,0,0)).
-	until v_err:mag < 1 {
+	until v_err:mag < max(1, dv:mag * 0.0015) {
 		local dv_mag is dv:mag.
 		local t_burn is ManeuverTime(dv_mag).
 		printData("dv_mag:",40,dv_mag).
@@ -369,7 +375,7 @@ function BurnInit {
 
 		// integrate powered trajectory t_burn forward using verlet integrator.
 		set burnoutState to VelocityVerlet(t_0, t_burn, t_ref, i_f).
-		set v_err to v_ref - burnoutState["v_f"].
+		set v_err to v_ref * solarprimevector:direction - burnoutState["v_f"].
 		set dv to dv + 0.5 * v_err.
 		
 		printData("v_err:",39,v_err:mag).
@@ -423,7 +429,7 @@ function BurnUpdate {
 
 		local v_err is V(1000, 0, 0).
 		local t_burn is 0.
-		until v_err:mag < 1 {
+		until v_err:mag < max(1, dv:mag * 0.0015) {
 			local dv_mag is dv:mag.
 			set t_burn to ManeuverTime(dv_mag).
 			printData("dv_mag:",40,dv_mag).
@@ -434,7 +440,8 @@ function BurnUpdate {
 			local burnoutState is VelocityVerlet(t_0, t_burn, t_ref, i_f).
 
 			// v_miss is v_node - v_cutoff.
-			set v_err to v_ref - burnoutState["v_f"].
+			set v_err to v_ref * solarprimevector:direction - 
+				burnoutState["v_f"].
 			set dv to dv + 0.5 * v_err.
 
 			printData("v_err:",39,v_err:mag).
@@ -444,7 +451,8 @@ function BurnUpdate {
 		local burnoutState is VelocityVerlet(t_0, t_bo - t_0, t_ref, i_f).
 		printData("dv_mag:",40,(burnoutState["v_f"] - ship:velocity:orbit):mag).
 		printData("t_burn:",37,(t_bo - time):clock).
-		printData("v_err:", 39,(v_ref - burnoutState["v_f"]):mag).
+		printData("v_err:", 39,((v_ref * solarprimevector:direction) - 
+			burnoutState["v_f"]):mag).
 	} else { return false. }
 	
 	if t_bo > time:seconds {

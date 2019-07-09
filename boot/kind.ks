@@ -331,7 +331,7 @@ function setPhase {
 
 	if phase = "Parking" {
 		lock shipposition to ship:position.
-		lock targetpoint to station:position + -55 * station:facing:vector.
+		lock targetpoint to station:position + -55 * station:facing:upvector.
 		lock targetfacing to station:facing.
 		lock guide to station.
 		set data["rcsloop"] to true.
@@ -658,7 +658,7 @@ function PlotRTB {
 	set addons:tr:prograde to true.
 
 	// Start with burn directly over KSC.
-	local burnHigh is getEtaToLon(ship, -89.6) + time:seconds.
+	local burnHigh is getEtaToLon(ship, -74.6) + time:seconds.
 	local burnLow is getEtaToLon(ship, 105.4) + time:seconds.
 	if burnHigh < burnLow { set burnHigh to burnHigh + ship:orbit:period. }
 
@@ -667,13 +667,13 @@ function PlotRTB {
 
 	local tempNode is getApsisNodeAt(18, burnHigh).
 	wait until addons:tr:hasimpact.
-	set offsetHigh to abs(clamp360(addons:tr:impactpos:lng) - clamp360(-84.96)).
+	set offsetHigh to abs(clamp360(addons:tr:impactpos:lng) - clamp360(-82.96)).
 	print "Impact: "+addons:tr:impactpos:lng. 
 	remove tempNode.
 	wait until not addons:tr:hasimpact.
 	set tempNode to getApsisNodeAt(18, burnLow).
 	wait until addons:tr:hasimpact.
-	set offsetLow to abs(clamp360(addons:tr:impactpos:lng) - clamp360(-89.6)). 
+	set offsetLow to abs(clamp360(addons:tr:impactpos:lng) - clamp360(-82.6)). 
 	print "Impact: "+addons:tr:impactpos:lng. 
 	remove tempNode.
 	wait until not addons:tr:hasimpact.

@@ -57,9 +57,9 @@ if traversal:length > 0 { for node in traversal {
 set rcsloop to true.
 set terminate to {
 	parameter distance.
-	if targetDock:state:startswith("Acquire") {
-		return false.
-	} else { return true. }
+	if cargoport:ship = targetDock:ship { return false. }
+	if targetDock:state:startswith("Acquire") { return false. }
+	return true.
 }.
 dockInit().
 

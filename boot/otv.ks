@@ -499,35 +499,36 @@ function setMode {
 	}
 
 	else if phase = "inject" {
-		local maneuver is SimplexSolver(
-			List(time:seconds + eta:periapsis, 0, 0, -100),
-			{
-				parameter tuple.
-				
-				local man is node(tuple[1], tuple[2], tuple[3], tuple[4]).
-				add man.
-				local orbit is man:obt.
-				local soi is Kerbin:altitude * 5.
-				if ship:body <> Sun {
-					set soi to ship:body:soiradius.
-				}
-				local incError is (data["inc"] - orbit:inclination) / 90.
-				local periError is (data["peri"] - orbit:periapsis) / soi.
-				local apoError is (data["apo"] - orbit:apoapsis) / soi.
-
-				remove man.
-				wait 0.
-
-				local error is incError * incError +
-								periError * periError +
-								apoError * apoError.
-				return sqrt(error).
-			},
-			List(10, 10, 10, 10),
-			0.01
-		).
-		local man is node(maneuver[1], maneuver[2], maneuver[3], maneuver[4]).
-		add man.
+		getApsisNodeAt(data["apo"], time:seconds + eta:periapsis).
+//		local maneuver is SimplexSolver(
+//			List(time:seconds + eta:periapsis, 0, 0, -100),
+//			{
+//				parameter tuple.
+//				
+//				local man is node(tuple[1], tuple[2], tuple[3], tuple[4]).
+//				add man.
+//				local orbit is man:obt.
+//				local soi is Kerbin:altitude * 5.
+//				if ship:body <> Sun {
+//					set soi to ship:body:soiradius.
+//				}
+//				local incError is (data["inc"] - orbit:inclination) / 90.
+//				local periError is (data["peri"] - orbit:periapsis) / soi.
+//				local apoError is (data["apo"] - orbit:apoapsis) / soi.
+//
+//				remove man.
+//				wait 0.
+//
+//				local error is incError * incError +
+//								periError * periError +
+//								apoError * apoError.
+//				return sqrt(error).
+//			},
+//			List(10, 10, 10, 10),
+//			0.01
+//		).
+//		local man is node(maneuver[1], maneuver[2], maneuver[3], maneuver[4]).
+//		add man.
 		return true.
 	}
 

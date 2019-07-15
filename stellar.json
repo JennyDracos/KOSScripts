@@ -129,6 +129,30 @@
                                 80.383559226989746
                             ],
                             "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        10.1,
+                        {
+                            "entries": [
+                                36000,
+                                80.2440414428711
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        20.3,
+                        {
+                            "entries": [
+                                36000,
+                                79.535369873046875
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        20.1,
+                        {
+                            "entries": [
+                                36000,
+                                79.655105590820313
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
                         }
                     ],
                     "$type": "kOS.Safe.Encapsulation.Lexicon"

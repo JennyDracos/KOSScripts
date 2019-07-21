@@ -209,17 +209,18 @@ set commsHandler to {
 		} else if message:haskey("to") and message["to"] <> tags[0] {
 			print "Sent elsewhere.".
 			return true.
+		} else if message:haskey("Queue") and message["Queue"] {
+			message:remove("Queue").
+			data["Queue"]:push(message).
+			return true.
 		} else if message["type"] = "Data" {
 			message:remove("type").
 			if message:haskey("to") { message:remove("to"). }
-			for key in message {
+			for key in message:keys {
 				set data[key] to message[key].
 			}
-		} else if message["type"] = "Queue" {
-			until message["queue"]:empty {
-				local command is message["queue"]:pop.
-				data["Queue"]:push(command).
-			}
+			setMode(data["mode"]).
+			return true.
 		}
 	} else if data["mode"] = "Sleep" and message = tags[0] + " WAKE" {
 		setMode("AWACT").

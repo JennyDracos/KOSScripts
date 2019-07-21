@@ -153,6 +153,38 @@
                                 79.655105590820313
                             ],
                             "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        34.2,
+                        {
+                            "entries": [
+                                36000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        34.3,
+                        {
+                            "entries": [
+                                36000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        36.5,
+                        {
+                            "entries": [
+                                36000,
+                                361
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
+                        },
+                        33.8,
+                        {
+                            "entries": [
+                                36000,
+                                80.084482192993164
+                            ],
+                            "$type": "kOS.Safe.Encapsulation.Lexicon"
                         }
                     ],
                     "$type": "kOS.Safe.Encapsulation.Lexicon"

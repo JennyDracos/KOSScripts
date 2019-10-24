@@ -1,7 +1,7 @@
 {
     "entries": [
         "kindjal",
-        262,
+        264,
         "claymore",
         13,
         "scimitar",
@@ -402,6 +402,13 @@
             "$type": "kOS.Safe.Encapsulation.Lexicon"
         },
         293,
+        {
+            "entries": [
+                
+            ],
+            "$type": "kOS.Safe.Encapsulation.Lexicon"
+        },
+        72,
         {
             "entries": [
                 

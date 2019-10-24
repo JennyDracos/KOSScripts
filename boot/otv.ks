@@ -537,62 +537,71 @@ function setMode {
 			set targetOrbital to Body(data["transferTo"]).
 		}
 
-		local interceptGuess is 0.
-		if ship:orbit:hasnextpatch {
-			set interceptGuess to time:seconds + 
-											0.5 * ship:orbit:nextpatcheta.
-		} else {
-			set interceptGuess to time:seconds + 0.5 * ship:orbit:period.
-		}
-
 		local hohmannFlightTime is 
 			pi * sqrt(((ship:position - ship:body:position):mag + 
 			(targetOrbital:position - ship:body:position):mag) ^ 3 / 
 			(8 * ship:body:mu)).
-	
-		local lambertParam is patternSearch(
-			List(interceptGuess, hohmannFlightTime),
-			{
-				parameter flightParam.
 
-				printData("t_bo:          ",35,(flightParam[1] - time):clock).
-				printData("t_coast:       ",36,time(flightParam[2]):clock).
+	 	local maxGuess is choose ship:orbit:nextpatcheta if ship:orbit:hasnextpatcch else ship:orbit:period.
+		local boostTime is globalSearch(0, maxGuess, {
+			parameter t_boost.
 
-				if flightParam[1] < time:seconds + 120 { 
-					return 2e10 + time:seconds - flightParam[1]. 
-				}
-				else if flightParam[2] < hohmannFlightTime / 2 { 
-					return 3e10 + flightParam[2]. 
-				}
+			local interceptTime is globalSearch(0.5 * hohmannFlightTime, maxGuess, {
+				parameter t_intercept.
 
-				local testNode is GetLambertInterceptNode(
-					  ship, 
-					  targetOrbital, 
-					  flightParam[1], 
-					  flightParam[2],
-					  V(0, 100, 0)
+				local testNode is getLambertInterceptNode(
+					ship,
+					targetOrbital,
+					flightParam[1],
+					flightParam[2],
+					V(0,100,0)
 				).
-				if testNode:orbit:periapsis < 
-						min(ship:periapsis, targetOrbital:periapsis) * 0.99 { 
-					local periapsisError is 1e10 + targetOrbital:periapsis - 
+				if testNode:orbit:periapsis <
+						min(ship:periapsis, targetOrbital:periapsis) * 0.99 {
+					local periapsisError is 1e10 + targetOrbital:periapsis -
 							testNode:orbit:periapsis.
 					remove testNode.
 					wait 0.
 					return periapsisError.
 				}
-				local deltaV is testNode:deltaV:mag + 
-					  (velocityat(ship, flightParam[1] + flightParam[2]):orbit -
-					   velocityat(targetOrbital, flightParam[1] + flightParam[2]):orbit):mag.
+				local deltaV is testNode:deltaV:mag +
+					(velocityAt(ship, flightParam[1] + flightParam[2]):orbit - 
+					velocityAt(targetOrbital, flightParam[1] + flightParam[2]):orbit):mag.
 
 				remove testNode.
 				wait 0.
 				return deltaV.
-			},
-			1024
-		).
+			}).
 
-		GetLambertInterceptNode(ship, targetOrbital, lambertParam[1], 
-			lambertParam[2], V(0, 100, 0)).
+			return interceptTime.
+		}).
+		local interceptTime is globalSearch(0.5 * hohmannFlightTime, maxGuess, {
+			parameter t_intercept.
+
+			local testNode is getLambertInterceptNode(
+				ship,
+				targetOrbital,
+				flightParam[1],
+				flightParam[2],
+				V(0,100,0)
+			).
+			if testNode:orbit:periapsis <
+					min(ship:periapsis, targetOrbital:periapsis) * 0.99 {
+				local periapsisError is 1e10 + targetOrbital:periapsis -
+						testNode:orbit:periapsis.
+				remove testNode.
+				wait 0.
+				return periapsisError.
+			}
+			local deltaV is testNode:deltaV:mag +
+				(velocityAt(ship, flightParam[1] + flightParam[2]):orbit - 
+				velocityAt(targetOrbital, flightParam[1] + flightParam[2]):orbit):mag.
+
+			remove testNode.
+			wait 0.
+			return deltaV.
+		}).
+		GetLambertInterceptNode(ship, targetOrbital, boostTime, interceptTime, V(0, 100, 0)).
 		return true.
 	} else if phase:startsWith("transfer") and ship:body:name = data["Body"] {
 		setMode("Preinject").

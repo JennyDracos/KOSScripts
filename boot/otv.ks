@@ -409,7 +409,14 @@ function setMode {
 		if apoNode:prograde > 100 { set apoNode:prograde to 100. }
 		add apoNode.
 	} else if phase = "preinject" {
-		getApsisNodeAt(data["peri"], time:seconds + 120).
+		local ut is time:seconds + 120.
+		local rB is positionat(ship, ut) - ship:body:position.
+		local rB_n is rB:normalized.
+		local a is (data["apo"] + ship:body:radius + rB:mag) / 2.
+		local v_peri is vcrs(rB_n, V(0,1,0)).
+		set v_peri:mag to getOrbVel(rb:mag, a, ship:body:mu).
+		local nd is getNode(velocityat(ship, ut):orbit, v_peri, rB, ut).
+		add nd.
 		return true.
 	}
 
@@ -499,35 +506,43 @@ function setMode {
 	}
 
 	else if phase = "inject" {
-		local maneuver is SimplexSolver(
-			List(time:seconds + eta:periapsis, 0, 0, -100),
-			{
-				parameter tuple.
-				
-				local man is node(tuple[1], tuple[2], tuple[3], tuple[4]).
-				add man.
-				local orbit is man:obt.
-				local soi is Kerbin:altitude * 5.
-				if ship:body <> Sun {
-					set soi to ship:body:soiradius.
-				}
-				local incError is (data["inc"] - orbit:inclination) / 90.
-				local periError is (data["peri"] - orbit:periapsis) / soi.
-				local apoError is (data["apo"] - orbit:apoapsis) / soi.
-
-				remove man.
-				wait 0.
-
-				local error is incError * incError +
-								periError * periError +
-								apoError * apoError.
-				return sqrt(error).
-			},
-			List(10, 10, 10, 10),
-			0.01
-		).
-		local man is node(maneuver[1], maneuver[2], maneuver[3], maneuver[4]).
-		add man.
+		local ut is time:seconds + eta:periapsis.
+		local rB is positionat(ship, ut) - ship:body:position.
+		local rB_n is rB:normalized.
+		local a is (data["apo"] + ship:body:radius + rB:mag) / 2.
+		local v_apo is vcrs(rB_n, V(0,1,0)).
+		set v_apo:mag to getOrbVel(rb:mag, a, ship:body:mu).
+		local nd is getNode(velocityat(ship, ut):orbit, v_apo, rB, ut).
+		add nd.
+//		local maneuver is SimplexSolver(
+//			List(time:seconds + eta:periapsis, 0, 0, -100),
+//			{
+//				parameter tuple.
+//				
+//				local man is node(tuple[1], tuple[2], tuple[3], tuple[4]).
+//				add man.
+//				local orbit is man:obt.
+//				local soi is Kerbin:altitude * 5.
+//				if ship:body <> Sun {
+//					set soi to ship:body:soiradius.
+//				}
+//				local incError is (data["inc"] - orbit:inclination) / 90.
+//				local periError is (data["peri"] - orbit:periapsis) / soi.
+//				local apoError is (data["apo"] - orbit:apoapsis) / soi.
+//
+//				remove man.
+//				wait 0.
+//
+//				local error is incError * incError +
+//								periError * periError +
+//								apoError * apoError.
+//				return sqrt(error).
+//			},
+//			List(10, 10, 10, 10),
+//			0.01
+//		).
+//		local man is node(maneuver[1], maneuver[2], maneuver[3], maneuver[4]).
+//		add man.
 		return true.
 	}
 

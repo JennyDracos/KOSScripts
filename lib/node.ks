@@ -157,8 +157,8 @@ function RCSBurn {
 	unlock steering.
 	unlock throttle.
 
+	rcs on.
 	if nd:deltaV:mag > 0.1 {
-		rcs on.
 		local t0 is time.
 		until nd:deltaV:mag < 0.1 or (time - t0):seconds > 15 {
 			local sense is ship:facing.
@@ -172,8 +172,8 @@ function RCSBurn {
 		}
 
 		set ship:control:translation to V(0,0,0).
-		rcs off.
 	}
+	rcs off.
 }
 
 
@@ -283,6 +283,7 @@ function BurnInit {
 			  dv_0.
 
 	print "Updating burn via simulation!".
+	AddDisplay("Burn").
 	RecalcEngines().
 
 	local m_0 is ship:mass.
@@ -301,7 +302,7 @@ function BurnInit {
 		}
 		set t_ig to t_n - t_burn.
 		set t_bo to t_n.
-		AddAlarm("Maneuver", t_ig, ship:name + " burn", "").
+		AddAlarm("Maneuver", t_ig - 5, ship:name + " burn", "").
 
 		local dv is dv_0.
 		lock steering to lookdirup(dv, ship:facing:upvector).
@@ -315,14 +316,15 @@ function BurnInit {
 
 	print "Testing from " + (t_n - t_burn_0 - time):clock + " to " + (t_n - time):clock + ".".
 
-	local burnPrep is GoldenSection(
+	local t_0 is GoldenSection(
 		t_n - 2 * t_burn_0,
 		t_n - 1,
 		{
 			parameter t_0.
 
 			// choose a start time t0.
-			printData("t_0:",35,(t_0-time):clock).
+			//printData("t_0:",35,(t_0-time):clock).
+			SetDisplayData("t_0",(t_0 - time):clock,"Burn").
 
 			local dv is dv_0.
 
@@ -331,8 +333,6 @@ function BurnInit {
 			until v_err:mag < 0.1 * max(1, dv:mag) {
 				local dv_mag is dv:mag.
 				local t_burn is ManeuverTime(dv_mag).
-				printData("dv_mag:",40,dv_mag).
-				printData("t_burn",37,time(t_burn):clock).
 
 				set i_f to dv:normalized.
 
@@ -345,7 +345,6 @@ function BurnInit {
 
 				if dv:mag > dv_0:mag * 5 { return 1e10 + dv:mag. }
 
-				printData("v_err:",39,v_err:mag).
 			}
 			local p_err is (r_ref * solarprimevector:direction) - 
 				burnoutState["r_f"].
@@ -354,9 +353,10 @@ function BurnInit {
 		},
 		0.05
 	).
-	local t_0 is burnPrep.
+	//set t_0 to burnPrep.
 	print "Burn selected at t:" + t_0.
-	printData("t_0:",35,(t_0-time):clock).
+	SetDisplayData("t_0",(t_0 - time):clock,"Burn").
+	//printData("t_0:",35,(t_0-time):clock).
 
 	local v_0 is velocityAt(ship, t_0):orbit.
 	local r_0 is positionAt(ship, t_0) - ship:body:position.
@@ -368,8 +368,10 @@ function BurnInit {
 	until v_err:mag < max(1, dv:mag * 0.0015) {
 		local dv_mag is dv:mag.
 		local t_burn is ManeuverTime(dv_mag).
-		printData("dv_mag:",40,dv_mag).
-		printData("t_burn",37,time(t_burn):clock).
+		//printData("dv_mag:",40,dv_mag).
+		SetDisplayData("dv_mag",dv_mag,"Burn").
+		//printData("t_burn",37,time(t_burn):clock).
+		SetDisplayData("t_burn",time(t_burn):clock,"Burn").
 
 		set i_f to dv:normalized.
 
@@ -378,7 +380,8 @@ function BurnInit {
 		set v_err to v_ref * solarprimevector:direction - burnoutState["v_f"].
 		set dv to dv + 0.5 * v_err.
 		
-		printData("v_err:",39,v_err:mag).
+		//printData("v_err:",39,v_err:mag).
+		SetDisplayData("v_err",v_err:mag,"Burn").
 	}
 	print "Burn plotted!".
 
@@ -386,7 +389,7 @@ function BurnInit {
 	for alarm in listAlarms("Maneuver") {
 		deleteAlarm(alarm:ID).
 	}
-	AddAlarm("Maneuver", t_0, ship:name + " burn", "").
+	AddAlarm("Maneuver", t_0 - 5, ship:name + " burn", "").
 
 	set t_ig to t_0.
 	set t_bo to t_0 + t_burn.
@@ -415,11 +418,15 @@ function BurnUpdate {
 	if t_0 < t_ig { set t_0 to t_ig. }
 
 	if t_ig > time {
-		printData("t_ignition:", 20, (t_ig - time):clock).
+		//printData("t_ignition:", 20, (t_ig - time):clock).
+		SetDisplayData("t_ignition",(t_ig - time):clock,"Burn").
+
 	} else {
-		printData("t_ignition:", 20, "-"+(time - t_ig):clock).
+		//printData("t_ignition:", 20, "-"+(time - t_ig):clock).
+		SetDisplayData("t_ignition","-"+(time-t_ig):clock,"Burn").
 	}
-	printData("t_burnout:", 22, (t_bo - time):clock).
+	//printData("t_burnout:", 22, (t_bo - time):clock).
+	SetDisplayData("t_burnout",(t_bo - time):clock,"Burn").
 	
 	if time < t_ig and time > t_retest { // Active guidance
 		set t_retest to time + 5.
@@ -432,8 +439,10 @@ function BurnUpdate {
 		until v_err:mag < max(1, dv:mag * 0.0015) {
 			local dv_mag is dv:mag.
 			set t_burn to ManeuverTime(dv_mag).
-			printData("dv_mag:",40,dv_mag).
-			printData("t_burn",37,time(t_burn):clock).
+			//printData("dv_mag:",40,dv_mag).
+			SetDisplayData("dv_mag",dv_mag,"Burn").
+			//printData("t_burn",37,time(t_burn):clock).
+			SetDisplayData("t_burn",time(t_burn):clock,"Burn").
 
 			set i_f to dv:normalized.
 
@@ -444,22 +453,30 @@ function BurnUpdate {
 				burnoutState["v_f"].
 			set dv to dv + 0.5 * v_err.
 
-			printData("v_err:",39,v_err:mag).
+			//printData("v_err:",39,v_err:mag).
+			SetDisplayData("v_err",v_err:mag,"Burn").
 		}
 		set t_bo to t_0 + t_burn.
 	} else if time > t_ig {
 		local burnoutState is VelocityVerlet(t_0, t_bo - t_0, t_ref, i_f).
-		printData("dv_mag:",40,(burnoutState["v_f"] - ship:velocity:orbit):mag).
-		printData("t_burn:",37,(t_bo - time):clock).
-		printData("v_err:", 39,((v_ref * solarprimevector:direction) - 
-			burnoutState["v_f"]):mag).
+		//printData("dv_mag:",40,(burnoutState["v_f"] - ship:velocity:orbit):mag).
+		SetDisplayData("dv_mag",(burnoutState["v_f"] - ship:velocity:orbit):mag, "Burn").
+		//printData("t_burn:",37,(t_bo - time):clock).
+		SetDisplayData("t_burn",(t_bo - time):clock, "Burn").
+		//printData("v_err:", 39,((v_ref * solarprimevector:direction) - 
+		//	burnoutState["v_f"]):mag).
+		SetDisplayData("v_err",((v_ref * solarprimevector:direction) - 
+		      burnoutState["v_f"]):mag, "Burn").
 	} else { return false. }
 	
 	if t_bo > time:seconds {
-		printData("t_ignition:", 20, "-"+(time - t_ig):clock).
-		printData("t_burnout:", 22, (t_bo - time):clock).
+		SetDisplayData("t_ignition","-"+(time - t_ig):clock, "Burn").
+		//printData("t_ignition:", 20, "-"+(time - t_ig):clock).
+		SetDisplayData("t_burnout",(t_bo - time):clock, "Burn").
+		//printData("t_burnout:", 22, (t_bo - time):clock).
 		return false.
 	} else {
+		RemoveDisplay("Burn").
 		lock throttle to 0.
 		return true.
 	}

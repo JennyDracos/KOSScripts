@@ -3,33 +3,37 @@
 clearscreen.
 
 // Build Library
-copypath("0:/boot/otv.ks","1:/boot/otv.ks").
-
-compile "0:/libmath.ks" to "1:/libmath".
-compile "0:/liborbit.ks" to "1:/liborbit".
-compile "0:/liborbit_interplanetary.ks" to "1:/liborbit_interplanetary".
+for name in List(
+	"libmath",
+	"liborbit",
+	"liborbit_interplanetary"
+) compile "0:/"+name+".ks" to "1:/"+name.
 
 //compile "0:/exenode_peg_standalone.ks" to "1:/exenode".
+for name in List(
+	"boot/pod.ks",
+	"libsimplex.ks",
+	"lib/node.ks",
+	"lib/dock.ks",
+	"lib/ui.ks",
+	"lib/comms.ks",
+	"lib/landing.ks",
 
-copypath("0:/lib_ui.ks","1:/").
-copypath("0:/libsimplex.ks","1:/").
-copypath("0:/lib/node.ks","1:/lib/node.ks").
-copypath("0:/lib/dock.ks","1:/lib/dock.ks").
-copypath("0:/lib/ui.ks","1:/lib/ui.ks").
+	"lib/bisectionsolver.ks"
+) copypath("0:/" + name, "1:/" + name).
 
-copypath("0:/lib/comms.ks","1:/lib/comms.ks").
+set core:bootfilename to "/boot/pod.ks".
 
-set core:bootfilename to "/boot/otv.ks".
-
+clearguis().
 runoncepath("1:/lib/ui").
 runoncepath("1:/liborbit_interplanetary").
 runoncepath("1:/libsimplex.ks").
 runoncepath("1:/lib/comms").
 runoncepath("1:/lib/node").
+runoncepath("1:/lib/landing").
 runoncepath("1:/lib/dock").
-runoncepath("0:/exenode_peg_standalone").
 
-print "OTV Controller standing up.".
+print "Pod Controller standing up.".
 
 wait until ship:loaded and ship:unpacked.
 
@@ -40,18 +44,17 @@ if exists("1:/data.json") {
 	set data to Lexicon().
 }
 
-if not data:haskey("phase") { set data["phase"] to "AWACT". }
 lock phase to data["phase"].
 
-if not data:haskey("body") { set data["body"] to "Mun". }
+if not data:haskey("phase") {
+	set data:phase to choose "AWACT" if ship:partstagged("Booster"):empty else "Launch".
+}
+if not data:haskey("body") { set data["body"] to "Kerbin". }
 if not data:haskey("inc") { set data["inc"] to 0. }
-if not data:haskey("peri") { set data["peri"] to 400000. }
-if not data:haskey("apo") { set data["apo"] to 400000. }
+if not data:haskey("peri") { set data["peri"] to 80000. }
+if not data:haskey("apo") { set data["apo"] to 80000. }
 if not data:haskey("target") { set data["target"] to "KH Highport". }
-if not data:haskey("steering") { set data["steering"] to 10. }
-if not data:haskey("flipover") { set data["flipover"] to 300. }
-if not data:haskey("cstab") { set data["cstab"] to false. }
-if not data:haskey("klaw") { set data["klaw"] to false. }
+if not data:haskey("flipover") { set data["flipover"] to 10. }
 if not data:haskey("commandq") { set data["commandq"] to Queue(). }
 lock commandQueue to data["commandq"].
 if not data:haskeY("parkTimer") { set data["parkTimer"] to 0. }
@@ -61,30 +64,30 @@ if data:haskey("deltaTime") { set d_t to data["deltaTime"]. }
 
 writejson(data, "1:/data.json").
 
-set steeringmanager:maxstoppingtime to 5.
-set steeringmanager:pitchpid:kd to 1.
-set steeringmanager:yawpid:kd to 1.
-function setSteer {
-	set steeringmanager:pitchts to data["steering"].
-	set steeringmanager:rollts to data["steering"].
-	set steeringmanager:yawts to data["steering"].
-}
-setSteer().
-on data["steering"] { setSteer(). }
+print "Pod standing up with :" + data.
 
-print "OTV standing up with :" + data.
+addDisplayData("Phase",{ return data["phase"]. }).
+
+addDisplayData("Body",{ return data["body"]. }).
+addDisplayData("Inclination",{ return data["inc"]. }).
+addDisplayData("Periapsis",{ return data["peri"]. }).
+addDisplayData("Apoapsis",{ return data["apo"]. }).
+
+addDisplayData("Target",{ return data["target"]. }).
+addDisplayData("Command Queue",{return data["commandq"]:length.}).
+addDisplayData("Park Timer",{return max(0, (data["parkTimer"]-time):seconds).}).
+
+startUI().
+
+on round(time:seconds) {
+	displayUpdate().
+	return true.
+}
 
 on abort {
-	copypath("0:/boot/otv.ks", "1:/boot/otv.ks").
-	set core:bootfilename to "/boot/otv.ks".
+	copypath("0:/boot/pod.ks", "1:/boot/pod.ks").
+	set core:bootfilename to "/boot/pod.ks".
 	reboot.
-}
-
-local execute is false.
-on ag10 {
-	print "Executing next node!".
-	set execute to true.
-	return true.
 }
 
 function FindUID {
@@ -123,7 +126,7 @@ on ship:body {
 		if vessel(data["target"]):body = body { setMode("preinject"). }
 		else { setMode("transferInject"). }
 	}
-	if data["phase"] = "eject" and body:name = data["transferThrough"] {
+	if data["phase"] = "Return" and body:name = data["transferThrough"] {
 		setMode("transferIntercept").
 	} else if data["phase"] = "transferIntercept" {
 		setMode("transferInject").
@@ -239,6 +242,47 @@ function PlotEject {
 	add PlotEjectHelper(t_e, v_param).
 }
 
+local function lambertDV {
+	parameter flightParam, mincoast.
+	printData("ETA:",35,flightParam[1] - time:seconds).
+	printData("Duration:",36, flightParam[2]).
+
+	if flightParam[2] < hohmannFlightTime / 2 { 
+		return 2e10 - flightParam[2]. 
+	}
+
+	local pos0 is positionat(transferFrom, flightParam[1]).
+	local pos1 is positionat(transferTo, flightParam[1] + flightParam[2]).
+	local posB is transferThrough:position.
+
+	local r0 is pos0 - posB.
+	local r1 is pos1 - posB.
+
+	local dta is vang(r0, r1).
+	if vdot(vcrs(r0, r1), v(0,1,0)) > 0 { set dta to clamp360(-dta). }
+
+    local solution is LambertSolver(
+		  r0:mag, r1:mag, 0, dta, flightParam[2], transferThrough:mu).
+
+	local f is solution[5].
+	local g is solution[6].
+	local gprime is solution[7].
+	local vburn is (r1 - f * r0) * (1 / g).
+	local v0 is velocityat(transferFrom, flightParam[1]):orbit.
+	local dv is vburn - v0.
+
+	if flightParam[1] < time:seconds + 
+						2 * ManeuverTime(dv:mag) {
+		return 1e10 - flightParam[1].
+	}
+
+	local vfin is (1/g) * (gprime * r1 - r0).
+	local dv2 is velocityat(transferTo, flightParam[1] + flightParam[2]):obt - vfin.
+
+
+	return abs(dv:mag + dv2:mag - data["dvBudget"]).
+}
+
 function setMode {
 	parameter newMode.
 
@@ -256,12 +300,35 @@ function setMode {
 		dockFinal().
 	}
 
+	if newMode:startswith("Execute") = false {
+		until not hasnode { 
+			remove nextnode. 
+			wait 0.
+		}
+	}
+
 	print "Updating phase to " + newMode.
 
 	set data["phase"] to newMode.
 	writejson(data, "1:/data.json").
 
-	if phase = "route" {
+	if newMode = "Prelaunch" {
+		when ship:maxthrust > 0 then {
+			SetMode("Launch").
+		}
+	}
+
+	else if newMode = "Launch" {
+		print "Running ascent.".
+		runpath("booster:/launch_pitch_jerk.ks", 80000).
+		SetMode("RaisePeri").
+	}
+
+	else if newMode = "RaisePeri" {
+		getApsisNodeAt(data:peri, time:seconds + min(eta:apoapsis, eta:periapsis)).
+	}
+
+	else if phase = "route" {
 	
 		if hasnode { remove nextnode. }	
 
@@ -298,80 +365,93 @@ function setMode {
 
 		print data.
 
-		if destination:body = transferThrough and 
-			ship:body <> transferThrough and 
-			destination:body:name <> "Sun" {
+		// If we are going from planet to moon, Transfer.
+		// If we are going from moon to planet, Return.
+		// If we are going from moon to moon, Lambert.
+		// Else Intercept.
+		if destination:body = transferThrough and ship:body = transferThrough {
+			setMode("Intercept").
+		} else if destination:body = transferThrough {
+			setMode("Return").
+		} else if ship:body = transferThrough {
+			setMode("Transfer").
+		} else {
+			setMode("Lambert").
+		}
 
-			setMode("Eject").
+		return true.
 
-		} else { // Lambert.
-			local hohmannFlightTime is
-				pi * sqrt(((transferFrom:position - transferThrough:position):mag +
-				(transferTo:position - transferThrough:position):mag) ^ 3 / 
-				(8 * transferThrough:mu)).
+	} else if newMode = "Transfer" {
+		// Plot a hohmann transfer to the target's altitude.
+		local destination is body(data:body).
+		local orb_d is destination:orbit.
+		
+		local firstCutoff is time:seconds + 6 * 60.
+		local maxGuess is ship:orbit:period.
+	
+		function hohBurnAtTime {
+			parameter ut.
 
-			local firstCutoff is time:seconds + 6 * 60 * 60.
-			if transferFrom = ship { set firstCutoff to time:seconds + 5 * 60. }
+			local sma_d is orb_d:semimajoraxis.
+			local e_d is orb_d:eccentricity.
+
+			local M_d_t is destination:obt:meananomalyatepoch +
+			      sqrt(ship:body:mu / (sma_d * sma_d * sma_d)) * (ut - destination:obt:epoch).
+			local ta_t is M_d_t + 2*e_d*sin(M_d_t) + 1.25 * e_d * e_d * sin(2 * M_d_t).
+			local ta_t2 is clamp360(ta_t + 180).
+
+			local r_d_t2 is sma_d * (1 - e_d * e_d) / (1 + e_d * cos(ta_t2)).
+
+			local p_s_t is positionat(ship, ut).
+			local r_s_t is (p_s_t - ship:body:position):mag.
+
+			local hohmannFlightTime is 
+				pi * sqrt((r_s_t + r_d_t2)  ^ 3 / (8 * ship:body:mu)).
+
+			local t2 is ut + hohmannFlightTime.
+			local p_s_t2 is p_s_t + (ship:body:position - p_s_t):normalized * (r_s_t + r_d_t2).
+
+			return List(r_d_t2, (positionat(destination, t2) - p_s_t2):mag).
+		}
 			
-			AddDisplay("Lam").
+		local boostTime is globalSection(firstCutoff, maxGuess/10, {
+			parameter t_boost.
 
-			local lambertParam is simplexSolver(
-				List(firstCutoff, hohmannFlightTime),
-				{
-					parameter flightParam.	
+			return hohBurnAtTime(t_boost)[1].
+		}).
 
-					SetDisplayData("ETA", flightParam[1] - time:seconds, "Lam").
-					SetDisplayData("Duration", flightParam[2], "Lam").
+		getApsisNodeAt(hohBurnAtTime(boostTime)[0], boostTime).
 
-					if flightParam[2] < hohmannFlightTime / 2 { 
-						return 2e10 - flightParam[2]. 
-					}
+		set data:phase to "ExecuteTransfer".
 
-					local pos0 is positionat(transferFrom, flightParam[1]).
-					local pos1 is positionat(transferTo, flightParam[1] + flightParam[2]).
-					local posB is transferThrough:position.
+	} else if newMode = "Lambert" {
+		// Lambert.
+		local hohmannFlightTime is
+			pi * sqrt(((transferFrom:position - transferThrough:position):mag +
+			(transferTo:position - transferThrough:position):mag) ^ 3 / 
+			(8 * transferThrough:mu)).
 
-					local r0 is pos0 - posB.
-					local r1 is pos1 - posB.
+		local firstCutoff is time:seconds + 6 * 60 * 60.
+		if transferFrom = ship { set firstCutoff to time:seconds + 5 * 60. }
+		
+		AddDisplay("Lam").
 
-					local dta is vang(r0, r1).
-					if vdot(vcrs(r0, r1), v(0,1,0)) > 0 { set dta to clamp360(-dta). }
+		local lambertParam is simplexSolver(
+			List(firstCutoff, hohmannFlightTime),
+			{
+				parameter flightParam.	
 
-					local solution is LambertSolver(
-					  r0:mag, r1:mag, 0, dta, flightParam[2], transferThrough:mu).
+				//printData("ETA:",35,flightParam[1] - time:seconds).
+				SetDisplayData("ETA",flightParam[1] - time:seconds,"Lam").
+				//printData("Duration:",36, flightParam[2]).
+				SetDisplayData("Duration",flightParam[2],"Lam").
 
-					local f is solution[5].
-					local g is solution[6].
-					local gprime is solution[7].
-					local vburn is (r1 - f * r0) * (1 / g).
-					local v0 is velocityat(transferFrom, flightParam[1]):orbit.
-					local dv is vburn - v0.
+				if flightParam[2] < hohmannFlightTime / 2 { 
+					return 2e10 - flightParam[2]. 
+				}
 
-					if flightParam[1] < time:seconds + 
-										2 * ManeuverTime(dv:mag) + 
-										data["flipover"] {
-						return 1e10 - flightParam[1].
-					}
-
-					local vfin is (1/g) * (gprime * r1 - r0).
-					local dv2 is velocityat(transferTo, 
-							 flightParam[1] + flightParam[2]):obt - vfin.
-
-
-					return abs(dv:mag + dv2:mag - data["dvBudget"]).
-				},
-				100,
-				1
-			).
-			
-			RemoveDisplay("Lam").
-
-			if data["transferFrom"] = ship:name {
-				GetLambertInterceptNode(transferFrom, transferTo, 
-				lambertParam[1], lambertParam[2], V(0,100,0)).
-			} else { // Plan ejection!
-				local pos0 is positionat(transferFrom, lambertParam[1]).
-				local pos1 is positionat(transferTo, lambertParam[1] + lambertParam[2]).
+				local pos0 is positionat(transferFrom, flightParam[1]).
+				local pos1 is positionat(transferTo, flightParam[1] + flightParam[2]).
 				local posB is transferThrough:position.
 
 				local r0 is pos0 - posB.
@@ -380,59 +460,90 @@ function setMode {
 				local dta is vang(r0, r1).
 				if vdot(vcrs(r0, r1), v(0,1,0)) > 0 { set dta to clamp360(-dta). }
 
-				local solution is LambertSolver(r0:mag, r1:mag, 0, dta, 
-				   lambertParam[2], transferThrough:mu).
+				local solution is LambertSolver(
+				  r0:mag, r1:mag, 0, dta, flightParam[2], transferThrough:mu).
 
 				local f is solution[5].
 				local g is solution[6].
+				local gprime is solution[7].
 				local vburn is (r1 - f * r0) * (1 / g).
+				local v0 is velocityat(transferFrom, flightParam[1]):orbit.
+				local dv is vburn - v0.
 
-				PlotEject(lambertParam[1], vburn, transferThrough).
-			}
+				if flightParam[1] < time:seconds + 
+									2 * ManeuverTime(dv:mag) {
+					return 1e10 - flightParam[1].
+				}
 
+				local vfin is (1/g) * (gprime * r1 - r0).
+				local dv2 is velocityat(transferTo, 
+						 flightParam[1] + flightParam[2]):obt - vfin.
+
+
+				return abs(dv:mag + dv2:mag - data["dvBudget"]).
+			},
+			100,
+			1
+		).
+			
+		if data["transferFrom"] = ship:name {
+			GetLambertInterceptNode(transferFrom, transferTo, 
+			lambertParam[1], lambertParam[2], V(0,100,0)).
+		} else { // Plan ejection!
+			local pos0 is positionat(transferFrom, lambertParam[1]).
+			local pos1 is positionat(transferTo, lambertParam[1] + lambertParam[2]).
+			local posB is transferThrough:position.
+
+			local r0 is pos0 - posB.
+			local r1 is pos1 - posB.
+
+			local dta is vang(r0, r1).
+			if vdot(vcrs(r0, r1), v(0,1,0)) > 0 { set dta to clamp360(-dta). }
+
+			local solution is LambertSolver(r0:mag, r1:mag, 0, dta, 
+			   lambertParam[2], transferThrough:mu).
+
+			local f is solution[5].
+			local g is solution[6].
+			local vburn is (r1 - f * r0) * (1 / g).
+
+			PlotEject(lambertParam[1], vburn, transferThrough).
 		}
-		setMode("ExecuteRoute").
-		return true.
-	} else if phase = "IonPeri" {
-		local periNode is GetApsisNodeAt(data["Peri"], 
-			time:seconds + eta:apoapsis).
-		if periNode:prograde > 100 { set periNode:prograde to 100. }
-	} else if phase = "IonApo" {
-		local apoNode is GetApsisNodeAt(data["Apo"], 
-			time:seconds + eta:periapsis).
-		if apoNode:prograde > 100 { set apoNode:prograde to 100. }
-		add apoNode.
-	} else if phase = "SetInclination" {
-		getChangeIncNode(data:inc, ship:obt:lan).
-	} else if phase = "preinject" {
-		local injectNode is node(time:seconds + 60, 0, 0, 0).
-		add injectNode.
+	
+		RemoveDisplay("Lam").
 
-		local injectTune is simplexSolver(
-		  	List(0,0,0),
+		SetMode("ExecuteLambert").
+		return true.
+	} else if phase = "preinject" {
+		local injectNode is Node(time:seconds + 60, 0, 0, 0).
+		add injectNode.
+		local nodeMod is simplexSolver(
+			List(0, 0, 0),
 			{
 				parameter tuple.
 
 				set injectNode:prograde to tuple[1].
-				set injectNode:radialOut to tuple[2].
+				set injectNode:radialout to tuple[2].
 				set injectNode:normal to tuple[3].
 
 				local incError is (injectNode:orbit:inclination - data:inc) / 90.
-				print "Inc Er: " + incError.
+				print "Inc: " + incError * 90.
 				local periError is choose
-				  injectNode:orbit:periapsis - data:peri
-				  if incError < 1 else
-				  (2 * body:radius + injectNode:orbit:periapsis) - data:peri.
+				  (injectNode:orbit:periapsis - data:peri) 
+				  if incError > 1 else
+				  (injectNode:orbit:periapsis + 2 * body:radius - data:peri).
 				set periError to periError / body:soiRadius.
-				print "Peri Er: " + periError.
-				return incError * incError + periError * periError.
+				print "Pe: " + periError * body:soiRadius.
+				return 100 * incError * incError + 100 * periError * periError.
 			},
 			100
 		).
-		set injectNode:prograde to injectTune[1].
-		set injectNode:radialOut to injectTune[2].
-		set injectNode:normal to injectTune[3].
-	} else if false {
+		set injectNode:prograde to nodeMod[1].
+		set injectNode:radialout to nodeMod[2].
+		set injectNode:normal to nodeMod[3].
+
+		return true.
+	} else if phase = "Peri" {
 		local ut is time:seconds + 120.
 		local rB is positionat(ship, ut) - ship:body:position.
 		local rB_n is rB:normalized.
@@ -444,7 +555,7 @@ function setMode {
 		return true.
 	}
 
-	else if phase = "eject" {
+	else if phase = "Return" {
 		// Do this when we only need to eject into a transfer orbit.
 		// This means from a moon to a planet.  Solar orbits are just too long.
 	
@@ -455,78 +566,6 @@ function setMode {
 		
 		PlotEject(time:seconds + 100, v_horiz).
 		
-//		local departNode is node(time:seconds + 1800, 500, 0, 0).
-//		local departTime is time:seconds + 1800.
-//		add departNode.
-//		
-//		local escapeVelocity is sqrt(2 * constant:G * ship:body:mass / 
-//			(ship:orbit:periapsis + ship:body:radius)) - 
-//			ship:velocity:orbit:mag.
-//
-//		local burnCap is 0.
-//		if ship:orbit:semimajoraxis < 0 { set burnCap to ship:orbit:nextpatcheta. }
-//		else { set burnCap to ship:orbit:period. }
-//
-//		local maneuver is simplexSolver(
-//			List(0,escapeVelocity * 1.1,0,0),
-//			{
-//				parameter tuple.
-//				
-//				set departNode:eta to tuple[1] + departTime - time:seconds.
-//				set departNode:prograde to tuple[2].
-//				set departNode:radialOut to tuple[3].
-//				set departNode:normal to tuple[4].
-//
-//				if departNode:eta < data["flipover"] + 
-//						ManeuverTime(departNode:deltaV:mag) {
-//					return 6e10 - departNode:eta.
-//				}
-//				if departNode:eta > burnCap {
-//					return 7e10.
-//				}
-//				if departNode:orbit:hasNextPatch() = false {
-//					return 3e10.
-//				}
-//				local transferOrbit is departNode:orbit:nextPatch.
-//				until transferOrbit:body:name = data["transferThrough"] {
-//					if transferOrbit:hasNextPatch() = false {
-//						return 1e10.
-//					}
-//					set transferOrbit to transferOrbit:nextPatch.
-//				}
-//				
-//				if transferOrbit:hasNextPatch() {
-//					return 3e10.
-//				}
-//
-//				local incError to abs(transferOrbit:inclination) / 180 * 10. 
-//				// 10x weighting.
-//				local periError to abs(transferOrbit:periapsis - 400000) /
-//					transferOrbit:body:soiradius.  // 1x weighting.
-//				local deltaVError to departNode:deltaV:mag * .00001.  
-//				local apoError to abs(transferOrbit:apoapsis - 
-//					ship:body:apoapsis) / 10. // 10x weighting
-//					
-//				// /10000 weighting.
-//
-//				local error is sqrt(incError * incError + 
-//									periError * periError + 
-//									deltaVError * deltaVError).
-//				printData("Inclination:",35,incError).
-//				printData("Periapsis:",36,periError).
-//				printData("Delta V:",37,deltaVError).
-//				printData("Error:",39,error).
-//
-//				return error.
-//			},
-//			List(burnCap * .9, escapeVelocity * 2, 100, 100),
-//			0.01
-//		).
-//
-//		set departNode:eta to maneuver[1] + departTime - time:seconds.
-//		set departNode:prograde to maneuver[2].
-//		set departNode:radialOut to maneuver[3].
-//		set departNode:normal to maneuver[4].
 	}
 
 	else if phase = "inject" {
@@ -542,10 +581,7 @@ function setMode {
 	}
 
 	else if phase = "intercept" {
-		local targetOrbital is vessel(data["target"]).
-		if phase:startswith("transfer") {
-			set targetOrbital to Body(data["transferTo"]).
-		}
+		local targetOrbital is vessel(data:target).
 
 		function hohTime {
 			parameter uta.
@@ -564,15 +600,14 @@ function setMode {
 	 	local maxGuess is choose ship:orbit:nextpatcheta if ship:orbit:hasnextpatch else 
 			1 / abs(1 / ship:orbit:period - 1 / targetOrbital:orbit:period).
 		local interceptParams is globalSimplex(
-			List(searchSeed(time:seconds + 180), searchSeed(time:seconds + maxGuess * 0.4),
+			List(searchSeed(time:seconds + 60), searchSeed(time:seconds + maxGuess * 0.4),
 				searchSeed(time:seconds + maxGuess * 0.8)),
 			{
 				parameter tuple.
 
-				if tuple[1] < time:seconds + 180 { return 3e9 - tuple[1]. }
-				if tuple[2] < 0.1 * hohTime(tuple[1]) { return 2e9 - tuple[1]. }
+				if tuple[1] < time:seconds + 60 { return 3e9 - tuple[1]. }
+				if tuple[2] < 0.2 * hohTime(tuple[1]) { return 2e9 - tuple[2]. }
 
-				wait 0.
 				local testNode is getLambertInterceptNode(
 					ship,
 					targetOrbital,
@@ -580,6 +615,7 @@ function setMode {
 					tuple[2],
 					V(0, 100, 0)
 				).
+				wait 0.
 
 				if testNode:orbit:periapsis < max(ship:body:atm:height, 10000) {
 					local periapsisError is 1e9 - testNode:orbit:periapsis.
@@ -598,7 +634,10 @@ function setMode {
 			},
 			100
 		).
-		GetLambertInterceptNode(ship, targetOrbital, interceptParams[1], interceptParams[2], V(0, 100, 0)).
+		
+		GetLambertInterceptNode(ship, targetOrbital, interceptParams[1], interceptParams[2], 
+			V(0, 100, 0)).
+		setMode("ExecuteIntercept").
 		return true.
 	} else if phase:startsWith("transfer") and ship:body:name = data["Body"] {
 		setMode("Preinject").
@@ -618,7 +657,7 @@ function setMode {
 		local tuneNode is node(burnAt, 0, 0, 0).
 		add tuneNode.
 
-		AddDisplay("FT").
+		AddDisplay("Finetune").
 
 		local maneuver is simplexSolver(
 			List(0, 0, 0, 0),
@@ -633,7 +672,7 @@ function setMode {
 				if tuneNode:eta < data["flipover"] + 
 				   ManeuverTime(tuneNode:deltaV:mag) {
 					print "Too soon".
-					return 2e10.
+					return 2e10 + tuneNode:eta.
 				}
 
 				local patch is tuneNode:orbit.
@@ -652,9 +691,9 @@ function setMode {
 					}.
 					local periParam is (patch:periapsis - data["peri"]) /
 					   soirad.  // 1x weight
-					SetDisplayData("Delta V Param", deltaVParam, "FT").
-					SetDisplayData("Inclination P", incParam, "FT").
-					SetDisplayData("Periapsis Par", periParam, "FT").
+					setDisplayData("Delta V Param", deltaVParam, "Finetune").
+					setDisplayData("Inclination P", incParam, "Finetune").
+					setDisplayData("Periapsis Par", periParam, "Finetune").
 
 					return sqrt(incParam * incParam + periParam * periParam + 
 					   deltaVParam * deltaVParam).
@@ -667,7 +706,7 @@ function setMode {
 			0.1
 		).
 
-		RemoveDisplay("FT").
+		RemoveDisplay("Finetune").
 
 		set tuneNode:eta to maneuver[1].
 		set tuneNode:prograde to maneuver[2] / 100.
@@ -675,44 +714,43 @@ function setMode {
 		set tuneNode:radialout to maneuver[4] / 100.
 
 		if ship:orbit:hasNextPatch() and tuneNode:eta > ship:orbit:nextPatchETA() {
-			set tuneNode:prograde to 0.
-			set tuneNode:normal to 0.
-			set tuneNode:radialOut to 0.
+			remove tuneNode.
+		} else if tuneNode:eta < data["flipover"] {
+			remove tuneNode.
 		}
 		return true.
 
 	} // Improve Intercept
 	else if phase:contains("finetune") {
-		local targetOrbital is 0.
-		if phase:startswith("rendezvous") or data["transferTo"] = "transfer" {
-			set targetOrbital to vessel(data["target"]).
-		} else {
-			set targetOrbital to body(data["transferTo"]).
-		}
+		local targetOrbital is choose vessel(data["target"]) if
+			phase:startswith("rendezvous") or data["transferTo"] = "transfer"
+		else body(data["transferTo"]).
+
 		local interceptTime is globalSection(
 			time:seconds, 
 			choose ship:orbit:nextpatcheta / 10 if ship:orbit:hasnextpatch else 
-			  choose targetOrbital:orbit:nextpatcheta / 10 if targetOrbital:orbit:hasnextpatch else
-			  1 / (1 / ship:orbit:period + 1 / targetOrbital:orbit:period) / 10,
+			choose targetOrbital:orbit:nextpatcheta / 10 if targetOrbital:orbit:hasnextpatch else
+			1 / (1 / ship:orbit:period + 1 / targetOrbital:orbit:period) / 10,
 			{ 
 				parameter t. 
 				return (positionat(ship, t) - positionat(targetOrbital, t)):mag.
 			}, 
 			0.1, 
-			10
+			100
 		).
 //		local interceptTime is getClosestApproach(ship, targetOrbital)[0].
 
-		AddDisplay("FT").
-		local offset is choose v(0,100,0) if targetOrbital:istype("vessel") else
-		  lookdirup(-positionAt(targetOrbital, interceptTime):normalized, V(0,0,1)) * 
-		  (targetOrbital:soiradius * v(0.7071, 0.7071, 0)).
+		AddDisplay("Int").
 
 		local intercept is patternSearch(
 			List(time:seconds + 120),
 			{
 				parameter tuple.
 				local flightTime is interceptTime - tuple[1].
+				local offset is choose v(0,100,0) if targetOrbital:istype("vessel") else
+				  lookdirup(-positionAt(targetOrbital, interceptTime):normalized, V(0,0,1)) * 
+				    (targetOrbital:soiradius * v(0.7071, 0.7071, 0)).
+				
 
 				local testNode is GetLambertInterceptNode(
 					ship,
@@ -727,17 +765,17 @@ function setMode {
 					velocityat(targetOrbital, interceptTime):orbit):mag.
 
 				remove testNode.
-
+				wait 0.
 				if tuple[1] < time:seconds + 120 set deltaV to deltaV * 100.
 
-				SetDisplayData("t_bo",round(tuple[1],0.1),"FT").
-				SetDisplayData("t_coast",round(flightTime,0.1),"FT").
+				//printData("t_bo:          ",35,round(tuple[1],0.1)).
+				SetDisplayData("t_bo",round(tuple[1],0.1),"Int").
+				//printData("t_coast:       ",35,round(flightTime,0.1)).
+				SetDisplayData("t_coast",round(flightTime,0.1),"Int").
 				return deltaV.
 			},
 			120
 		).
-
-		RemoveDisplay("FT").
 
 		GetLambertInterceptNode(ship, targetOrbital, intercept[1], 
 			interceptTime - intercept[1], V(0, 100, 0)).
@@ -755,6 +793,16 @@ function setMode {
 		add node.
 		return true.
 	}
+
+	else if phase = "Brake" {
+	}
+
+	else if phase = "Translation" {
+	}
+
+	else if phase = "Landing" {
+	}
+
 
 	else if phase = "Park" {
 		core:part:controlfrom.
@@ -793,6 +841,67 @@ function setMode {
 		dockInit().
 		return true.
 	}
+
+	else if newMode = "planeChange" {
+		local landingGeo is LatLng(data:lat, data:lng).
+		local dualBurn is PatternSearch(
+			List(5000),
+			{
+				parameter tuple.
+
+				local nodes is tupleToDeorbit(tuple).
+				local deorbitBurn is nodes[1].
+
+				wait 0.1.
+				local peri is nodes[1]:orbit:periapsis + landingGeo:terrainHeight.
+				remove nodes[1].
+				remove nodes[0].
+				if peri < 500 {
+					local err is 1e6 + (500 - peri).
+					print "Need more height! " + err.
+					return err.
+				} else if addons:tr:hasImpact {
+					local err is 1e7 + (500 - peri).
+					print "Splat! " + err.
+					return err.
+				}
+				return peri.
+			},
+			100,
+			1
+		).
+
+		local nodes is tupleToDeorbit(dualBurn).
+		set data["finalAlt"] to dualBurn[0].
+
+	} else if newMode = "Deorbit" {
+		until not hasnode {
+			remove nextnode.
+				wait 0.
+		}
+		// ta_apo is 90 degrees after LAN for lat < 0, 90 degrees before LAN for lat > 0.
+		// ta_lan is 360 - aop.
+		local ta_lan is 360 - ship:orbit:argumentofperiapsis.
+		local ta_apo is ta_lan + 90.
+		if data["lat"] > 0 { set ta_apo to ta_apo - 180. }
+		set ta_apo to clamp360(ta_apo).
+
+		local apotime is time:seconds + getETATrueAnom(ta_apo).
+
+		local apo is (positionat(ship, apoTime) - ship:body:position):mag.
+		local peri is data["finalAlt"] + ship:body:radius.
+		local sma is (apo + peri) / 2.
+			
+		local descentFlightTime is pi * sqrt(sma * sma * sma / ship:body:mu).
+
+		local deorbitBurn is getApsisNodeAt(data["finalAlt"], apoTime).
+
+		local brakeTime is apoTime + descentFlightTime.
+		local brakeBurn is node(brakeTime, 0, 0, -velocityAt(ship, brakeTime):orbit:mag).
+		add brakeBurn.
+
+	}
+
 	print "All else.".
 	if phase = "Dock" {
 		print "Running Dock.".
@@ -886,12 +995,12 @@ set commsHandler to {
 		commandQueue:push(content:replace("QUEUE ","")).
 	} else if content = core:Tag + " WAKE" {
 		setMode("AWACT").
-	} else if content = "CSTAB HOME" {
-		set data["cstab"] to (ship:partstagged(core:tag + " Fore"):length > 0).
-	} else if content = "KLAW HOME" {
-		set data["klaw"] to 
-			ship:partsTagged(core:tag + " stb"):length > 0 and
-			ship:partsTagged(core:tag + " prt"):length > 0.
+	} else if content:startswith("DATA") {
+		local dataCmd is Lexicon(content:replace("DATA ",""):split(",")).
+		print dataCmd.
+		for key in dataCmd:keys {
+			set data[key] to dataCmd[key].
+		}
 	}
 
 	if phase <> "Sleep" {
@@ -906,19 +1015,90 @@ set commsHandler to {
 			set data["mission"] to "rendezvous".
 			setMode("route").
 		} else if content:startsWith("ORBIT") {
-			set data["target"] to content:replace("ORBIT ","").
-			set data["mission"] to "orbit".
-			setMode("route").
+			print "Processing orbit.".
+			local destinationName is content:replace("ORBIT ","").
+			local destination is body(destinationName).
+
+			set data:transferTo to destinationName.
+			set data:body to destinationName.
+			set data:transferFrom to ship:body:name.
+		
+			set data:target to "".
+			set data:mission to "orbit".
+			
+			if ship:body = destination {
+				// clean up the orbit, then.
+			} else if destination:body = ship:body {
+				setMode("Transfer").
+			} else if destination:body = ship:body:body {
+				setMode("Lambert").
+			} else if destination = ship:body:body {
+				setMode("Return").
+			}
+		} else if content:startsWith("LAND") {
+			if content = "LAND" {
+				setMode("Deorbit").
+			} else {
+				local details is content:replace("LAND AT","").
+				if details:startswith("At") {
+				} else {
+					set details to details:replace("At ",""):split(" ").
+					local lat is details[0].
+					if lat:contains("N") set lat to lat:replace("N",""):toNumber(0).
+					else if lat:contains("S") set lat to lat:replace("S",""):toNumber(0) * -1.
+					else set lat to lat:toNumber(0).
+
+					local lng is details[1].
+					if lng:contains("E") set lng to lng:replace("E",""):toNumber(0).
+					else if lng:contains("W") set lng to lng:replace("W",""):toNumber(0) * -1.
+					else set lng to lng:toNumber(0).
+
+					set data:lat to lat.
+					set data:lng to lng.
+					setMode("PlaneChange").
+				}
+			}
+		} else if content = "CIRC" {
+			if eta:apoapsis > eta:periapsis {
+				set data["apo"] to data["peri"].
+				core:connection:sendmessage("APO").
+				core:connection:sendmessage("QUEUE PERI").
+			} else {
+				set data["peri"] to data["apo"].
+				core:connection:sendmessage("PERI").
+				core:connection:sendmessage("QUEUE APO").
+			}
+		} else if content:startsWith("CIRC") {
+			local alt is content:replace("CIRC ",""):tonumber(80) * 1000.
+			set data["apo"] to alt.
+			set data["peri"] to alt.
+			if eta:apoapsis > eta:periapsis {
+				core:connection:sendmessage("APO").
+				core:connection:sendmessage("QUEUE PERI").
+			} else {
+				core:connection:sendmessage("PERI").
+				core:connection:sendmessage("QUEUE APO").
+			}
+		} else if content = "APO" {
+			getApsisNodeAt(data["apo"], time:seconds + eta:periapsis).
+			set data:phase to "ExecuteAWACT".
+		} else if content = "PERI" {
+			getApsisNodeAt(data["peri"], time:seconds + eta:apoapsis).
+			set data:phase to "ExecuteAWACT".
+		} else if content:startsWith("APO") {
+			local alt is content:replace("APO ",""):tonumber(80) * 1000.
+			set data["apo"] to alt.
+			getApsisNodeAt(alt, time:seconds + eta:periapsis).
+			set data:phase to "ExecuteAWACT".
+		} else if content:startsWith("PERI") {
+			local alt is content:replace("PERI ",""):tonumber(80) * 1000.
+			set data["peri"] to alt.
+			getApsisNodeAt(alt, time:seconds + eta:apoapsis).
+			set data:phase to "ExecuteAWACT".
 		} else if content = "DOCK" {
 			setMode("Dock").
 		} else if content = "PARK" {
 			setMode("Park").
-		} else if content:startsWith("ION") {
-			local alt is content:replace("ION ",""):tonumber(400) * 1000.
-			set data["apo"] to alt.
-			set data["peri"] to alt.
-			if ship:apoapsis > alt { setMode("IonPeri"). }
-			else { setMode("IonApo"). }
 		} else if content:startswith("DEPLOY ") {
 			local deployModule is content:replace("DEPLOY ","").
 			if moduleList:haskey(deployModule) = false {
@@ -960,19 +1140,27 @@ set commsHandler to {
 	return true.
 }.
 
+function PullPhase {
+	if data:phase:startswith("execute") {
+		setMode(data:phase:replace("execute","")).
+	}
+}
 function PushPhase {
-	until not hasnode {
-		remove nextnode.
-		wait 0.
+	print "Pushing phase " + data:phase.
+	if data:phase:startswith("execute") {
+		set data:phase to data:phase:replace("execute","").
+		print "Make that " + data:phase.
 	}
-	if data["phase"]:startsWith("Execute") {
-		set data:phase to data:phase:replace("Execute","").
-	}
-	if data["phase"] = "transfer-finetune" {
+	if data["phase"] = "RaisePeri" {
+		if ship:partstagged("Booster"):length > 0 stage.
+		setMode("AWACT").
+	} else if data["phase"] = "Transfer" {
+		setMode("transfer-finetune").
+	} else if data["phase"] = "transfer-finetune" {
 		setMode("transfer-pause").
 	} else if data["phase"] = "route" {
 		setMode("transfer-finetune").
-	} else if data["phase"] = "eject" {
+	} else if data["phase"] = "Return" {
 		setMode("transfer-finetune").
 	} else if data["phase"] = "preinject" {
 		setMode("inject").
@@ -984,34 +1172,22 @@ function PushPhase {
 		}
 	} else if data["phase"] = "intercept" {
 		setMode("rendezvous-finetune").
+	} else if data["phase"] = "runinter" {
+		setMode("rendezvous-finetune").
 	} else if data["phase"] = "rendezvous-finetune" {
 		setMode("match").
 	} else if data["phase"] = "match" {
 		setMode("AWACT").
+	} else if data["phase"] = "PlaneChange" {
+		set data["phase"] to "Deorbit". 
 	} else if data["phase"]:startsWith("Ion") {
 		if ship:apoapsis < data["apo"] { setMode("IonApo"). }
 		else if ship:periapsis < data["peri"] { setMode("IonPeri"). }
 		else { setMode("AWACT"). }
+	} else {
+		setMode(data:phase).
 	}
 }
-
-
-addDisplayData("Phase",{ return data["phase"]. }).
-
-addDisplayData("Body",{ return data["body"]. }).
-addDisplayData("Inclination",{ return data["inc"]. }).
-addDisplayData("Periapsis",{ return data["peri"]. }).
-addDisplayData("Apoapsis",{ return data["apo"]. }).
-
-addDisplayData("Target",{ return data["target"]. }).
-addDisplayData("Steering",{ return data["steering"]. }).
-addDisplayData("Flip Time",{ return data["flipover"]. }).
-addDisplayData("Stabilizer",{ return data["cstab"]. }).
-//addDisplayData("Klaws",{return data["Klaws"]. }).
-addDisplayData("Command Queue",{return data["commandq"]:length.}).
-addDisplayData("Park Timer",{return max(0, (data["parkTimer"]-time):seconds).}).
-
-startUI().
 
 print data["phase"].
 if phase = "transfer-finetune" and body:name = data["transferTo"] {
@@ -1022,40 +1198,28 @@ if phase = "transfer-finetune" and body:name = data["transferTo"] {
 	setMode("preinject").
 } else if phase = "transfer-pause" {
 	setMode("transfer-finetune").
+} else if phase:startswith("Execute") and not hasnode {
+	PullPhase().
 } else {
 	setMode(phase).
 }
 
 local refreshTimer is 0.
 
-on round(time:seconds) {
-	displayUpdate().
-	return true.
-}
 
 until false {
 
 	if data["phase"] = "Sleep" {
-		wait 1.
-	}
-
-	if execute {
-		set burnloop to false.
-		set execute to false.
-
-		print "Calling exenode...".
-		exenode_peg().
-		print "Exenode terminated.".
-
-		lock throttle to 0.
-		unlock steering.
-
-		PushPhase().
-		wait 0.
+		wait 10.
+	} else if data["phase"] = "BOOST" {
+		if ship:partstagged("Booster"):empty {
+			set data["phase"] to "AWACT".
+		} else {
+			wait 10.
+		}
 	} else if rcsLoop {
 		set rcsLoop to dockUpdate().
 	} else if burnLoop and BurnUpdate() {
-		print "Setting burnLoop to false.".
 		set burnLoop to false.
 
 
@@ -1069,19 +1233,20 @@ until false {
 	} else if hasnode {
 		core:part:controlfrom.
 
+		if nextnode:eta < 0 {
+			remove nextnode.
+			wait 0.
+			PullPhase().
+		}
 		if nextnode:deltav:mag < 0.1 {
 			remove nextnode.
 			wait 0.
 			PushPhase().
-		} else if ManeuverTime(nextnode:deltav:mag) < 2 {
+		} else {
 			RunNode().
 			PushPhase().
-		} else if data["phase"] = "Match" {
-			BurnMatch(time:seconds + nextNode:eta,
-					 vessel(data["target"])).
-		} else {
-			BurnNode().
 		}
+		wait 0.
 	} else {
 		wait 1.
 	}

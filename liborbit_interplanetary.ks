@@ -94,6 +94,14 @@ function LambertSolver {
 		//local c3 is (DegToRad(dean) - sin(psin)) / DegToRad(psin).
 		local c3 is (dean_rad - sin(dean)) / dean_rad ^ 3.
 		//alert("c3:  " + c3).
+		if c2 = 0 {
+			print r0.
+			print r1.
+			print ta0.
+			print ta1.
+			print dt.
+			print mu.
+		}
 		set yn to r0 + r1 + a * (psi_rad * c3 - 1) / sqrt(c2).
 		//alert("yn:  " + yn).
 		if a > 0 and yn < 0 {

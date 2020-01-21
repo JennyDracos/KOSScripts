@@ -1,9 +1,11 @@
 @lazyglobal off.
 
+set terminal:width to 156.
+
 clearscreen.
 
 // Build Library
-copypath("0:/boot/otv.ks","1:/boot/otv.ks").
+copypath("0:/boot/pod.ks","1:/boot/pod.ks").
 
 compile "0:/libmath.ks" to "1:/libmath".
 compile "0:/liborbit.ks" to "1:/liborbit".
@@ -19,8 +21,9 @@ copypath("0:/lib/ui.ks","1:/lib/ui.ks").
 
 copypath("0:/lib/comms.ks","1:/lib/comms.ks").
 
-set core:bootfilename to "/boot/otv.ks".
+set core:bootfilename to "/boot/pod.ks".
 
+clearguis().
 runoncepath("1:/lib/ui").
 runoncepath("1:/liborbit_interplanetary").
 runoncepath("1:/libsimplex.ks").
@@ -29,7 +32,7 @@ runoncepath("1:/lib/node").
 runoncepath("1:/lib/dock").
 runoncepath("0:/exenode_peg_standalone").
 
-print "OTV Controller standing up.".
+print "Pod Controller standing up.".
 
 wait until ship:loaded and ship:unpacked.
 
@@ -40,7 +43,7 @@ if exists("1:/data.json") {
 	set data to Lexicon().
 }
 
-if not data:haskey("phase") { set data["phase"] to "AWACT". }
+if not data:haskey("phase") { set data["phase"] to "Inject". }
 lock phase to data["phase"].
 
 if not data:haskey("body") { set data["body"] to "Mun". }
@@ -313,15 +316,13 @@ function setMode {
 			local firstCutoff is time:seconds + 6 * 60 * 60.
 			if transferFrom = ship { set firstCutoff to time:seconds + 5 * 60. }
 			
-			AddDisplay("Lam").
-
 			local lambertParam is simplexSolver(
 				List(firstCutoff, hohmannFlightTime),
 				{
 					parameter flightParam.	
 
-					SetDisplayData("ETA", flightParam[1] - time:seconds, "Lam").
-					SetDisplayData("Duration", flightParam[2], "Lam").
+					printData("ETA:",35,flightParam[1] - time:seconds).
+					printData("Duration:",36, flightParam[2]).
 
 					if flightParam[2] < hohmannFlightTime / 2 { 
 						return 2e10 - flightParam[2]. 
@@ -364,8 +365,6 @@ function setMode {
 				1
 			).
 			
-			RemoveDisplay("Lam").
-
 			if data["transferFrom"] = ship:name {
 				GetLambertInterceptNode(transferFrom, transferTo, 
 				lambertParam[1], lambertParam[2], V(0,100,0)).
@@ -391,7 +390,7 @@ function setMode {
 			}
 
 		}
-		setMode("ExecuteRoute").
+		SetPhase("PostRoute").
 		return true.
 	} else if phase = "IonPeri" {
 		local periNode is GetApsisNodeAt(data["Peri"], 
@@ -402,37 +401,7 @@ function setMode {
 			time:seconds + eta:periapsis).
 		if apoNode:prograde > 100 { set apoNode:prograde to 100. }
 		add apoNode.
-	} else if phase = "SetInclination" {
-		getChangeIncNode(data:inc, ship:obt:lan).
 	} else if phase = "preinject" {
-		local injectNode is node(time:seconds + 60, 0, 0, 0).
-		add injectNode.
-
-		local injectTune is simplexSolver(
-		  	List(0,0,0),
-			{
-				parameter tuple.
-
-				set injectNode:prograde to tuple[1].
-				set injectNode:radialOut to tuple[2].
-				set injectNode:normal to tuple[3].
-
-				local incError is (injectNode:orbit:inclination - data:inc) / 90.
-				print "Inc Er: " + incError.
-				local periError is choose
-				  injectNode:orbit:periapsis - data:peri
-				  if incError < 1 else
-				  (2 * body:radius + injectNode:orbit:periapsis) - data:peri.
-				set periError to periError / body:soiRadius.
-				print "Peri Er: " + periError.
-				return incError * incError + periError * periError.
-			},
-			100
-		).
-		set injectNode:prograde to injectTune[1].
-		set injectNode:radialOut to injectTune[2].
-		set injectNode:normal to injectTune[3].
-	} else if false {
 		local ut is time:seconds + 120.
 		local rB is positionat(ship, ut) - ship:body:position.
 		local rB_n is rB:normalized.
@@ -538,67 +507,125 @@ function setMode {
 		set v_apo:mag to getOrbVel(rb:mag, a, ship:body:mu).
 		local nd is getNode(velocityat(ship, ut):orbit, v_apo, rB, ut).
 		add nd.
+//		local maneuver is SimplexSolver(
+//			List(time:seconds + eta:periapsis, 0, 0, -100),
+//			{
+//				parameter tuple.
+//				
+//				local man is node(tuple[1], tuple[2], tuple[3], tuple[4]).
+//				add man.
+//				local orbit is man:obt.
+//				local soi is Kerbin:altitude * 5.
+//				if ship:body <> Sun {
+//					set soi to ship:body:soiradius.
+//				}
+//				local incError is (data["inc"] - orbit:inclination) / 90.
+//				local periError is (data["peri"] - orbit:periapsis) / soi.
+//				local apoError is (data["apo"] - orbit:apoapsis) / soi.
+//
+//				remove man.
+//				wait 0.
+//
+//				local error is incError * incError +
+//								periError * periError +
+//								apoError * apoError.
+//				return sqrt(error).
+//			},
+//			List(10, 10, 10, 10),
+//			0.01
+//		).
+//		local man is node(maneuver[1], maneuver[2], maneuver[3], maneuver[4]).
+//		add man.
 		return true.
 	}
 
-	else if phase = "intercept" {
+	else if phase:contains("intercept") {
 		local targetOrbital is vessel(data["target"]).
 		if phase:startswith("transfer") {
 			set targetOrbital to Body(data["transferTo"]).
 		}
 
-		function hohTime {
-			parameter uta.
-
-			local sma is (positionat(ship, uta) - ship:body:position):mag +
-			             (positionat(targetOrbital, uta) - ship:body:position):mag.
-
-			return pi * sqrt((sma * sma * sma) / (8 * ship:body:mu)).
-		}
-		function searchSeed {
-			parameter uta.
-
-			return List(uta, hohTime(uta)).
-		}
+		local hohmannFlightTime is 
+			pi * sqrt(((ship:position - ship:body:position):mag + 
+			(targetOrbital:position - ship:body:position):mag) ^ 3 / 
+			(8 * ship:body:mu)).
 
 	 	local maxGuess is choose ship:orbit:nextpatcheta if ship:orbit:hasnextpatch else 
 			1 / abs(1 / ship:orbit:period - 1 / targetOrbital:orbit:period).
-		local interceptParams is globalSimplex(
-			List(searchSeed(time:seconds + 180), searchSeed(time:seconds + maxGuess * 0.4),
-				searchSeed(time:seconds + maxGuess * 0.8)),
-			{
-				parameter tuple.
+		print "Searching from " + (time:seconds+120) + " to " + maxGuess.
+		local boostTime is globalSection(time:seconds+120, maxGuess/10, {
+			parameter t_boost.
 
-				if tuple[1] < time:seconds + 180 { return 3e9 - tuple[1]. }
-				if tuple[2] < 0.1 * hohTime(tuple[1]) { return 2e9 - tuple[1]. }
+			local interceptTime is globalSection(0.5 * hohmannFlightTime, 0.15 * hohmannFlightTime, {
+				parameter t_coast.
 
-				wait 0.
 				local testNode is getLambertInterceptNode(
 					ship,
 					targetOrbital,
-					tuple[1],
-					tuple[2],
-					V(0, 100, 0)
+					t_boost,
+					t_coast,
+					V(0,100,0)
 				).
-
-				if testNode:orbit:periapsis < max(ship:body:atm:height, 10000) {
-					local periapsisError is 1e9 - testNode:orbit:periapsis.
+				if testNode:orbit:periapsis <
+						min(ship:periapsis, targetOrbital:periapsis) * 0.99 {
+					local periapsisError is 1e10 + targetOrbital:periapsis -
+							testNode:orbit:periapsis.
 					remove testNode.
 					wait 0.
 					return periapsisError.
 				}
-
 				local deltaV is testNode:deltaV:mag +
-					(velocityAt(ship, tuple[1] + tuple[2]):orbit -
-					 velocityAt(targetOrbital, tuple[1] + tuple[2]):orbit):mag.
+					(velocityAt(ship, t_boost + t_coast):orbit - 
+					velocityAt(targetOrbital, t_boost + t_coast):orbit):mag.
 
 				remove testNode.
 				wait 0.
 				return deltaV.
-			},
-			100
-		).
-		GetLambertInterceptNode(ship, targetOrbital, interceptParams[1], interceptParams[2], V(0, 100, 0)).
+			}).
+
+			local testNode is getLambertInterceptNode(
+				ship, 
+				targetOrbital, 
+				t_boost, 
+				interceptTime, 
+				V(0,100,0)
+			).
+			local deltaV is testNode:deltaV:mag + 
+				(velocityAt(ship, t_boost + interceptTime):orbit - 
+				velocityAt(targetOrbital, t_boost + interceptTime):orbit):mag.
+			remove testNode.
+			return deltaV.
+		}).
+		print "Plotted burn for T-" + (boostTime - time:seconds).
+		local interceptTime is globalSection(0.5 * hohmannFlightTime, 0.15 * hohmannFlightTime, {
+			parameter t_coast.
+
+			local testNode is getLambertInterceptNode(
+				ship,
+				targetOrbital,
+				boostTime,
+				t_coast,
+				V(0,100,0)
+			).
+			if testNode:orbit:periapsis <
+					min(ship:periapsis, targetOrbital:periapsis) * 0.99 {
+				local periapsisError is 1e10 + targetOrbital:periapsis -
+						testNode:orbit:periapsis.
+				remove testNode.
+				wait 0.
+				return periapsisError.
+			}
+			local deltaV is testNode:deltaV:mag +
+				(velocityAt(ship, boostTime + t_coast):orbit - 
+				velocityAt(targetOrbital, boostTime + t_coast):orbit):mag.
+
+			remove testNode.
+			wait 0.
+			return deltaV.
+		}).
+		print "Flight will last " + interceptTime + " seconds".
+		GetLambertInterceptNode(ship, targetOrbital, boostTime, interceptTime, V(0, 100, 0)).
+		setMode("RunInter").
 		return true.
 	} else if phase:startsWith("transfer") and ship:body:name = data["Body"] {
 		setMode("Preinject").
@@ -617,8 +644,6 @@ function setMode {
 		local burnAt is time:seconds + 180.
 		local tuneNode is node(burnAt, 0, 0, 0).
 		add tuneNode.
-
-		AddDisplay("FT").
 
 		local maneuver is simplexSolver(
 			List(0, 0, 0, 0),
@@ -652,9 +677,9 @@ function setMode {
 					}.
 					local periParam is (patch:periapsis - data["peri"]) /
 					   soirad.  // 1x weight
-					SetDisplayData("Delta V Param", deltaVParam, "FT").
-					SetDisplayData("Inclination P", incParam, "FT").
-					SetDisplayData("Periapsis Par", periParam, "FT").
+					printData("Delta V Param:", 35, deltaVParam).
+					printData("Inclination P:", 36, incParam).
+					printData("Periapsis Par:", 37, periParam).
 
 					return sqrt(incParam * incParam + periParam * periParam + 
 					   deltaVParam * deltaVParam).
@@ -666,8 +691,6 @@ function setMode {
 			List(500,100,100,100),
 			0.1
 		).
-
-		RemoveDisplay("FT").
 
 		set tuneNode:eta to maneuver[1].
 		set tuneNode:prograde to maneuver[2] / 100.
@@ -691,22 +714,15 @@ function setMode {
 		}
 		local interceptTime is globalSection(
 			time:seconds, 
-			choose ship:orbit:nextpatcheta / 10 if ship:orbit:hasnextpatch else 
-			  choose targetOrbital:orbit:nextpatcheta / 10 if targetOrbital:orbit:hasnextpatch else
-			  1 / (1 / ship:orbit:period + 1 / targetOrbital:orbit:period) / 10,
+			100,
 			{ 
 				parameter t. 
 				return (positionat(ship, t) - positionat(targetOrbital, t)):mag.
 			}, 
 			0.1, 
-			10
+			100
 		).
 //		local interceptTime is getClosestApproach(ship, targetOrbital)[0].
-
-		AddDisplay("FT").
-		local offset is choose v(0,100,0) if targetOrbital:istype("vessel") else
-		  lookdirup(-positionAt(targetOrbital, interceptTime):normalized, V(0,0,1)) * 
-		  (targetOrbital:soiradius * v(0.7071, 0.7071, 0)).
 
 		local intercept is patternSearch(
 			List(time:seconds + 120),
@@ -719,7 +735,7 @@ function setMode {
 					targetOrbital,
 					tuple[1],
 					flightTime,
-					offset
+					V(0, 100, 0)
 				).
 
 				local deltaV is testNode:deltaV:mag + 
@@ -730,14 +746,12 @@ function setMode {
 
 				if tuple[1] < time:seconds + 120 set deltaV to deltaV * 100.
 
-				SetDisplayData("t_bo",round(tuple[1],0.1),"FT").
-				SetDisplayData("t_coast",round(flightTime,0.1),"FT").
+				printData("t_bo:          ",35,round(tuple[1],0.1)).
+				printData("t_coast:       ",35,round(flightTime,0.1)).
 				return deltaV.
 			},
 			120
 		).
-
-		RemoveDisplay("FT").
 
 		GetLambertInterceptNode(ship, targetOrbital, intercept[1], 
 			interceptTime - intercept[1], V(0, 100, 0)).
@@ -961,13 +975,6 @@ set commsHandler to {
 }.
 
 function PushPhase {
-	until not hasnode {
-		remove nextnode.
-		wait 0.
-	}
-	if data["phase"]:startsWith("Execute") {
-		set data:phase to data:phase:replace("Execute","").
-	}
 	if data["phase"] = "transfer-finetune" {
 		setMode("transfer-pause").
 	} else if data["phase"] = "route" {
@@ -984,6 +991,8 @@ function PushPhase {
 		}
 	} else if data["phase"] = "intercept" {
 		setMode("rendezvous-finetune").
+	} else if data["phase"] = "runinter" {
+		setMode("rendezvous-finetune").
 	} else if data["phase"] = "rendezvous-finetune" {
 		setMode("match").
 	} else if data["phase"] = "match" {
@@ -994,24 +1003,6 @@ function PushPhase {
 		else { setMode("AWACT"). }
 	}
 }
-
-
-addDisplayData("Phase",{ return data["phase"]. }).
-
-addDisplayData("Body",{ return data["body"]. }).
-addDisplayData("Inclination",{ return data["inc"]. }).
-addDisplayData("Periapsis",{ return data["peri"]. }).
-addDisplayData("Apoapsis",{ return data["apo"]. }).
-
-addDisplayData("Target",{ return data["target"]. }).
-addDisplayData("Steering",{ return data["steering"]. }).
-addDisplayData("Flip Time",{ return data["flipover"]. }).
-addDisplayData("Stabilizer",{ return data["cstab"]. }).
-//addDisplayData("Klaws",{return data["Klaws"]. }).
-addDisplayData("Command Queue",{return data["commandq"]:length.}).
-addDisplayData("Park Timer",{return max(0, (data["parkTimer"]-time):seconds).}).
-
-startUI().
 
 print data["phase"].
 if phase = "transfer-finetune" and body:name = data["transferTo"] {
@@ -1028,12 +1019,34 @@ if phase = "transfer-finetune" and body:name = data["transferTo"] {
 
 local refreshTimer is 0.
 
+
+addDisplayData("Phase",{ return data["phase"]. }).
+
+addDisplayData("Body",{ return data["body"]. }).
+addDisplayData("Inclination",{ return data["inc"]. }).
+addDisplayData("Periapsis",{ return data["peri"]. }).
+addDisplayData("Apoapsis",{ return data["apo"]. }).
+
+addDisplayData("Target",{ return data["target"]. }).
+addDisplayData("Steering",{ return data["steering"]. }).
+addDisplayData("Flip Time",{ return data["flipover"]. }).
+addDisplayData("Stabilizer",{ return data["cstab"]. }).
+addDisplayData("Klaws",{return data["klaw"]. }).
+addDisplayData("Command Queue",{return data["commandq"]:length.}).
+addDisplayData("Park Timer",{return max(0, (data["parkTimer"]-time):seconds).}).
+
+startUI().
+
 on round(time:seconds) {
 	displayUpdate().
-	return true.
 }
 
 until false {
+
+	if refreshTimer < time:seconds {
+		clearUI().
+		set refreshTimer to time:seconds + 10.
+	}
 
 	if data["phase"] = "Sleep" {
 		wait 1.
@@ -1055,7 +1068,6 @@ until false {
 	} else if rcsLoop {
 		set rcsLoop to dockUpdate().
 	} else if burnLoop and BurnUpdate() {
-		print "Setting burnLoop to false.".
 		set burnLoop to false.
 
 
